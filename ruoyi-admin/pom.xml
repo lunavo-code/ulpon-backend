@@ -104,6 +104,11 @@
             <artifactId>ruoyi-workflow</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.ulpon</groupId>
+            <artifactId>ulpon-geo</artifactId>
+        </dependency>
+
         <!-- Spring Boot Admin 客户端 -->
         <dependency>
             <groupId>de.codecentric</groupId>

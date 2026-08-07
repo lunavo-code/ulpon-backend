@@ -63,6 +63,13 @@
                 <artifactId>ruoyi-api</artifactId>
                 <version>${revision}</version>
             </dependency>
+
+            <!-- geo模块 -->
+            <dependency>
+                <groupId>com.ulpon</groupId>
+                <artifactId>ulpon-geo</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
