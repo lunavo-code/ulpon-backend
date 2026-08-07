@@ -1,3 +1,5 @@
+SET NAMES utf8mb4;
+
 -- ----------------------------
 -- 第三方平台授权表
 -- ----------------------------
@@ -82,7 +84,7 @@ create table sys_user (
     user_id           bigint(20)      not null                   comment '用户ID',
     dept_id           bigint(20)      default null               comment '部门ID',
     user_name         varchar(30)     not null                   comment '用户账号',
-    nick_name         varchar(30)     not null                   comment '用户昵称',
+    nick_name         varchar(60)     not null                   comment '用户昵称',
     user_type         varchar(10)     default 'sys_user'         comment '用户类型（sys_user系统用户）',
     email             varchar(50)     default ''                 comment '用户邮箱',
     phone_number      varchar(11)     default ''                 comment '手机号码',

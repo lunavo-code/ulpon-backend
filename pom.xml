@@ -164,6 +164,15 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- module 的依赖配置-->
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>ruoyi-module-bom</artifactId>
+                <version>${revision}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- 接口文档 -->
             <dependency>
                 <groupId>org.springdoc</groupId>
@@ -406,55 +415,6 @@
                 <groupId>org.lionsoul</groupId>
                 <artifactId>ip2region</artifactId>
                 <version>${ip2region.version}</version>
-            </dependency>
-
-            <!-- 系统模块 -->
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-system</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <!-- 调度任务模块 -->
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-job</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <!-- AI业务模块 -->
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-ai</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <!-- 代码生成模块 -->
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-gen</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <!-- demo模块 -->
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-demo</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <!--  工作流模块  -->
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-workflow</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <!--  api模块  -->
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-api</artifactId>
-                <version>${revision}</version>
             </dependency>
 
         </dependencies>

@@ -17,7 +17,7 @@ server:
 
 captcha:
   # 是否启用验证码校验
-  enable: true
+  enable: false
   # 验证码类型 math 数组计算 char 字符验证
   type: math
   # 数字验证码位数
@@ -29,6 +29,7 @@ captcha:
 logging:
   level:
     org.dromara: @logging.level@
+    com.ulpon: @logging.level@
     org.springframework: warn
     org.mybatis.spring.mapper: error
     org.apache.fury: warn
@@ -118,11 +119,11 @@ mybatis-plus:
   # 自定义配置 是否全局开启逻辑删除 关闭后 所有逻辑删除功能将失效
   enableLogicDelete: true
   # 多包名使用 例如 org.dromara.**.mapper,org.xxx.**.mapper
-  mapperPackage: org.dromara.**.mapper
+  mapperPackage: org.dromara.**.mapper,com.ulpon.**.mapper
   # 对应的 XML 文件位置
   mapperLocations: classpath*:mapper/**/*Mapper.xml
   # 实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: org.dromara.**.domain
+  typeAliasesPackage: org.dromara.**.domain,com.ulpon.**.domain
   global-config:
     dbConfig:
       # 主键类型
