@@ -5,6 +5,10 @@
               value="%cyan(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{36}) - %msg%n"/>
     <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
 
+    <!-- 屏蔽 Spring 关于 Bean 初始化过早/未被所有处理器处理的警告日志 -->
+    <logger name="org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker" level="ERROR"/>
+    <logger name="org.springframework.context.annotation.ConfigurationClassPostProcessor" level="ERROR"/>
+
     <!-- 控制台输出 -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
