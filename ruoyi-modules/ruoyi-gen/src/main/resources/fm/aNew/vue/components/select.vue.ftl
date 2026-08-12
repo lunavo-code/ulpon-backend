@@ -51,8 +51,7 @@
             disabled
             label="正在加载下一页..."
             value="-1"
-            style="text-align: center; color: var(--el-text-color-secondary);"
-        />
+            style="text-align: center; color: var(--el-text-color-secondary);"></el-option>
     </el-select>
 </template>
 

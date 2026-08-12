@@ -20,7 +20,7 @@ import org.dromara.common.mybatis.helper.DataBaseHelper;
 import org.dromara.gen.constant.GenConstants;
 import org.dromara.gen.domain.GenTable;
 import org.dromara.gen.domain.GenTableColumn;
-import org.dromara.gen.util.template.PathNamedTemplate;
+import org.dromara.gen.util.template.BaseTemplate;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -54,7 +54,7 @@ public class TemplateEngineUtils {
 
     // 模板引擎
     private static final TemplateEngine TEMPLATE_ENGINE;
-    private static final Map<String, PathNamedTemplate> TEMPLATE_MAPPER;
+    private static final Map<String, BaseTemplate> TEMPLATE_MAPPER;
     private static final ResourcePatternResolver RESOURCE_PATTERN_RESOLVER = new PathMatchingResourcePatternResolver();
 
     static {
@@ -66,7 +66,7 @@ public class TemplateEngineUtils {
         if (TEMPLATE_ENGINE instanceof FreemarkerEngine freemarkerEngine) {
             freemarkerEngine.getConfiguration().setNumberFormat("computer");
         }
-        TEMPLATE_MAPPER = PathNamedTemplate.form(TEMPLATE_ENGINE, GenConstants.TEMPLATE_PATHS);
+        TEMPLATE_MAPPER = BaseTemplate.form(TEMPLATE_ENGINE, GenConstants.TEMPLATE_PATHS);
     }
 
     /**
@@ -274,7 +274,7 @@ public class TemplateEngineUtils {
      *
      * @return 模板列表
      */
-    public static List<PathNamedTemplate> getTemplateList(String tplCategory, String dsName) {
+    public static List<BaseTemplate> getTemplateList(String tplCategory, String dsName) {
         return getTemplateList(tplCategory, dsName, GenConstants.FRONTEND_TYPE_VUE);
     }
 
@@ -286,8 +286,8 @@ public class TemplateEngineUtils {
      * @param frontendType 前端模板类型
      * @return 模板列表
      */
-    public static List<PathNamedTemplate> getTemplateList(String tplCategory, String dsName, String frontendType) {
-        List<PathNamedTemplate> templates = new ArrayList<>();
+    public static List<BaseTemplate> getTemplateList(String tplCategory, String dsName, String frontendType) {
+        List<BaseTemplate> templates = new ArrayList<>();
         // 后端源码模板
         templates.add(TEMPLATE_MAPPER.get(GenConstants.JAVA_DOMAIN_TEMPLATE_PATH));
         templates.add(TEMPLATE_MAPPER.get(GenConstants.JAVA_VO_TEMPLATE_PATH));
@@ -328,12 +328,12 @@ public class TemplateEngineUtils {
      * @param templatePath 模板路径
      * @return 带路径名的模板
      */
-    private static PathNamedTemplate getTemplate(String templatePath) {
-        PathNamedTemplate template = TEMPLATE_MAPPER.get(templatePath);
+    private static BaseTemplate getTemplate(String templatePath) {
+        BaseTemplate template = TEMPLATE_MAPPER.get(templatePath);
         if (ObjectUtil.isNotNull(template)) {
             return template;
         }
-        return PathNamedTemplate.form(TEMPLATE_ENGINE, templatePath);
+        return BaseTemplate.form(TEMPLATE_ENGINE, "templatePath");
     }
 
     /**

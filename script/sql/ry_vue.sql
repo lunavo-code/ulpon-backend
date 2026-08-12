@@ -793,6 +793,22 @@ create table gen_table_column (
 ) engine=innodb comment = '代码生成业务表字段';
 
 -- ----------------------------
+-- 19、代码生成业务表字段
+-- ----------------------------
+create table gen_template (
+    id bigint(20) not null primary key auto_increment comment 'id',
+    type varchar(50) not null comment '模板类型: backend,frontend-vue,frontend-react,sql',
+    name varchar(50) not null comment '模板名称',
+    content text not null comment '模板内容',
+    sort              int                                        comment '排序',
+    create_dept       bigint(20)      default null               comment '创建部门',
+    create_by         bigint(20)      default null               comment '创建者',
+    create_time       datetime                                   comment '创建时间',
+    update_by         bigint(20)      default null               comment '更新者',
+    update_time       datetime                                   comment '更新时间'
+) engine=innodb comment = '代码生成模板';
+
+-- ----------------------------
 -- OSS对象存储表
 -- ----------------------------
 create table sys_oss (

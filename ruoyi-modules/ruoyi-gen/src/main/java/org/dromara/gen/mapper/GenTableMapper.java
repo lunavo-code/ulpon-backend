@@ -2,6 +2,7 @@ package org.dromara.gen.mapper;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
+import org.apache.ibatis.annotations.Mapper;
 import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
 import org.dromara.gen.domain.GenTable;
 
@@ -12,6 +13,7 @@ import java.util.List;
  *
  * @author Lion Li
  */
+@Mapper
 @InterceptorIgnore(dataPermission = "true", tenantLine = "true")
 public interface GenTableMapper extends BaseMapperPlus<GenTable, GenTable> {
 

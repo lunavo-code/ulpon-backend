@@ -357,13 +357,13 @@
 
 <script setup name="${BusinessName}" lang="ts">
 import {
+  get${BusinessName},
   add${BusinessName},
+  del${BusinessName},
+  list${BusinessName},
 <#if enableStatus>
   change${BusinessName}Status,
 </#if>
-  del${BusinessName},
-  get${BusinessName},
-  list${BusinessName},
 <#if enableSort>
   update${BusinessName}Sort,
 </#if>
@@ -432,21 +432,21 @@ const data = reactive<PageData<${BusinessName}Form, ${BusinessName}Query>>({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-<#list columns as column>
-<#if column.query>
-<#if column.htmlType != "datetime" || column.queryType != "BETWEEN">
-    ${column.javaField}: undefined,
-</#if>
-</#if>
-</#list>
+    <#list columns as column>
+        <#if column.query>
+            <#if column.htmlType != "datetime" || column.queryType != "BETWEEN">
+                ${column.javaField}: undefined,
+            </#if>
+        </#if>
+    </#list>
     params: {
-<#list columns as column>
-<#if column.query>
-<#if column.htmlType == "datetime" && column.queryType == "BETWEEN">
-      ${column.javaField}: undefined,
-</#if>
-</#if>
-</#list>
+    <#list columns as column>
+        <#if column.query>
+            <#if column.htmlType == "datetime" && column.queryType == "BETWEEN">
+                  ${column.javaField}: undefined,
+            </#if>
+        </#if>
+    </#list>
     }
   },
   rules: {

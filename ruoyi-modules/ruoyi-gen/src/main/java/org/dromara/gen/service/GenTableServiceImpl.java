@@ -29,9 +29,10 @@ import org.dromara.gen.domain.GenTable;
 import org.dromara.gen.domain.GenTableColumn;
 import org.dromara.gen.mapper.GenTableColumnMapper;
 import org.dromara.gen.mapper.GenTableMapper;
+import org.dromara.gen.mapper.GenTemplateMapper;
 import org.dromara.gen.util.GenUtils;
 import org.dromara.gen.util.TemplateEngineUtils;
-import org.dromara.gen.util.template.PathNamedTemplate;
+import org.dromara.gen.util.template.BaseTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +55,7 @@ public class GenTableServiceImpl implements IGenTableService {
 
     private final GenTableMapper tableMapper;
     private final GenTableColumnMapper genTableColumnMapper;
+    private final IGenTemplateService genTemplateService;
 
     private static final String[] TABLE_IGNORE = new String[]{"sai_", "sj_", "flow_", "gen_"};
 
@@ -324,8 +326,8 @@ public class GenTableServiceImpl implements IGenTableService {
     @Override
     public Map<String, String> previewCode(Long tableId) {
         Map<String, String> dataMap = new LinkedHashMap<>();
-        RenderContext rc = buildRenderContext(tableId);
-        for (PathNamedTemplate template : rc.templates()) {
+        RenderContext<BaseTemplate> rc = buildRenderContext(tableId);
+        for (BaseTemplate template : rc.templates()) {
             dataMap.put(template.getPathName(), template.render(rc.context()));
         }
         return dataMap;
@@ -422,9 +424,9 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param zip     代码压缩输出流
      */
     private void writeCodeToZip(Long tableId, ZipOutputStream zip) {
-        RenderContext rc = buildRenderContext(tableId);
+        RenderContext<BaseTemplate> rc = buildRenderContext(tableId);
         GenTable table = rc.table();
-        for (PathNamedTemplate template : rc.templates()) {
+        for (BaseTemplate template : rc.templates()) {
             String pathName = template.getPathName();
             try {
                 String render = template.render(rc.context());
@@ -444,7 +446,7 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param tableId 业务表主键
      * @return 渲染上下文
      */
-    private RenderContext buildRenderContext(Long tableId) {
+    private RenderContext<BaseTemplate> buildRenderContext(Long tableId) {
         GenTable table = getGenTable(tableId);
         List<Long> menuIds = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
@@ -453,8 +455,10 @@ public class GenTableServiceImpl implements IGenTableService {
         table.setMenuIds(menuIds);
         setPkColumn(table);
         Dict context = TemplateEngineUtils.buildContext(table);
-        List<PathNamedTemplate> templates = TemplateEngineUtils.getTemplateList(table.getTplCategory(), table.getDataName(), table.getFrontendType());
-        return new RenderContext(table, context, templates);
+
+        List<BaseTemplate> templates = genTemplateService.getTemplateList(table.getTplCategory(), table.getDataName(), table.getFrontendType());
+//        List<BaseTemplate> templates = TemplateEngineUtils.getTemplateList(table.getTplCategory(), table.getDataName(), table.getFrontendType());
+        return new RenderContext<>(table, context, templates);
     }
 
     /**
@@ -464,7 +468,7 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param context   模板上下文
      * @param templates 待渲染模板
      */
-    private record RenderContext(GenTable table, Dict context, List<PathNamedTemplate> templates) {
+    private record RenderContext<T extends BaseTemplate>(GenTable table, Dict context, List<T> templates) {
     }
 
     /**
