@@ -21,7 +21,7 @@ public class GenVariable {
         this(new GenBaseVariable(table), new GenColumnVariable(table), new GenOptionVariable(table), new GenTreeVariable(table), Map.of());
     }
 
-    private GenVariable(GenTable table, Map<String, Object> other) {
+    public GenVariable(GenTable table, Map<String, Object> other) {
         this(table);
         this.other = other;
     }

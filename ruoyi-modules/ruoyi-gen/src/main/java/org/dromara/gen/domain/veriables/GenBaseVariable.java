@@ -162,11 +162,11 @@ public class GenBaseVariable {
         this.basePackage = StringUtils.substring(this.packageName, 0, lastIndex);
         this.author = table.getFunctionAuthor();
         this.datetime = DateUtils.now();
-        this.importList = bulidImportList(table);
+        this.importList = buildImportList(table);
         this.permissionPrefix = "%s:%s".formatted(this.moduleName, this.businessNameLower);
     }
 
-    private static HashSet<String> bulidImportList(GenTable genTable) {
+    private static HashSet<String> buildImportList(GenTable genTable) {
         List<GenTableColumn> columns = genTable.getColumns();
         HashSet<String> importList = new HashSet<>();
         for (GenTableColumn column : columns) {
