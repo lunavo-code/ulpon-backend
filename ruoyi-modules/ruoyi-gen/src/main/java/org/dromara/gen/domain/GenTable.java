@@ -1,5 +1,7 @@
 package org.dromara.gen.domain;
 
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.lang.Dict;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -8,8 +10,10 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.dromara.common.core.utils.StringUtils;
+import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
 import org.dromara.gen.constant.GenConstants;
+import org.dromara.gen.util.TemplateEngineUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -278,5 +282,24 @@ public class GenTable extends BaseEntity {
      */
     public static boolean isSuperColumn(String tplCategory, String javaField) {
         return StringUtils.equalsAnyIgnoreCase(javaField, GenConstants.BASE_ENTITY);
+    }
+
+    public void setTableFromOptions() {
+        Dict paramsObj = JsonUtils.parseMap(options);
+        treeCode = paramsObj.getStr(GenConstants.TREE_CODE);
+        treeParentCode = paramsObj.getStr(GenConstants.TREE_PARENT_CODE);
+        treeName = paramsObj.getStr(GenConstants.TREE_NAME);
+        parentMenuId = Convert.toLong(TemplateEngineUtils.getParentMenuId(paramsObj));
+        parentMenuName = paramsObj.getStr(GenConstants.PARENT_MENU_NAME);
+        enableExport = Convert.toBool(paramsObj.get(GenConstants.ENABLE_EXPORT), true);
+        enableStatus = Convert.toBool(paramsObj.get(GenConstants.ENABLE_STATUS), false);
+        statusField = paramsObj.getStr(GenConstants.STATUS_FIELD);
+        enableUnique = Convert.toBool(paramsObj.get(GenConstants.ENABLE_UNIQUE), false);
+        uniqueFields = Convert.toList(String.class, paramsObj.get(GenConstants.UNIQUE_FIELDS));
+        enableSort = Convert.toBool(paramsObj.get(GenConstants.ENABLE_SORT), false);
+        sortField = paramsObj.getStr(GenConstants.SORT_FIELD);
+        treeRootValue = paramsObj.getStr(GenConstants.TREE_ROOT_VALUE);
+        treeAncestorsField = paramsObj.getStr(GenConstants.TREE_ANCESTORS);
+        treeOrderField = paramsObj.getStr(GenConstants.TREE_ORDER_FIELD);
     }
 }

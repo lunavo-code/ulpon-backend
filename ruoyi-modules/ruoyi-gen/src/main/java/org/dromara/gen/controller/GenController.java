@@ -17,6 +17,7 @@ import org.dromara.common.web.core.BaseController;
 import org.dromara.gen.domain.GenTable;
 import org.dromara.gen.domain.GenTableColumn;
 import org.dromara.gen.service.IGenTableService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,7 +91,7 @@ public class GenController extends BaseController {
      */
     @SaCheckPermission("tool:gen:list")
     @GetMapping(value = "/column/{tableId}")
-    public R<PageResult<GenTableColumn>> columnList(@PathVariable("tableId") Long tableId) {
+    public R<PageResult<GenTableColumn>> columnList(@PathVariable Long tableId) {
         List<GenTableColumn> list = genTableService.selectGenTableColumnListByTableId(tableId);
         return R.ok(PageResult.build(list));
     }
@@ -153,7 +154,7 @@ public class GenController extends BaseController {
      */
     @SaCheckPermission("tool:gen:preview")
     @GetMapping("/preview/{tableId}")
-    public R<Map<String, String>> preview(@PathVariable("tableId") Long tableId) throws IOException {
+    public R<Map<String, String>> preview(@PathVariable Long tableId) {
         Map<String, String> dataMap = genTableService.previewCode(tableId);
         return R.ok(dataMap);
     }
@@ -167,9 +168,40 @@ public class GenController extends BaseController {
     @SaCheckPermission("tool:gen:code")
     @Log(title = "代码生成", businessType = BusinessType.GENCODE)
     @GetMapping("/download/{tableId}")
-    public void download(HttpServletResponse response, @PathVariable("tableId") Long tableId) throws IOException {
+    public void download(HttpServletResponse response, @PathVariable Long tableId, @RequestParam(required = false) String fileName) throws IOException {
         byte[] data = genTableService.downloadCode(tableId);
-        genCode(response, data);
+        downloadCodeZip(response, data, fileName);
+    }
+
+    /**
+     * 批量生成代码
+     *
+     * @param response   HTTP 响应
+     * @param tableIdStr 表ID串
+     */
+    @SaCheckPermission("tool:gen:code")
+    @Log(title = "代码生成", businessType = BusinessType.GENCODE)
+    @GetMapping("/batchGenCode")
+    public void batchGenCode(HttpServletResponse response, String tableIdStr, @RequestParam(required = false) String fileName) throws IOException {
+        String[] tableIds = Convert.toStrArray(tableIdStr);
+        byte[] data = genTableService.downloadCode(tableIds);
+        downloadCodeZip(response, data, fileName);
+    }
+
+    /**
+     * 将生成结果写出为 zip 文件流。
+     *
+     * @param response HTTP 响应
+     * @param data     zip 二进制数据
+     */
+    private void downloadCodeZip(HttpServletResponse response, byte[] data, String fileName) throws IOException {
+        response.reset();
+        response.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        response.addHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + ".zip\"");
+        response.addHeader(HttpHeaders.CONTENT_LENGTH, "" + data.length);
+        response.setContentType("application/octet-stream; charset=UTF-8");
+        IoUtil.write(response.getOutputStream(), false, data);
     }
 
     /**
@@ -182,40 +214,9 @@ public class GenController extends BaseController {
     @Log(title = "代码生成", businessType = BusinessType.UPDATE)
     @Lock4j(keys = {"#tableId"}, acquireTimeout = 5000)
     @GetMapping("/synchDb/{tableId}")
-    public R<Void> synchDb(@PathVariable("tableId") Long tableId) {
+    public R<Void> synchDb(@PathVariable Long tableId) {
         genTableService.synchDb(tableId);
         return R.ok();
-    }
-
-    /**
-     * 批量生成代码
-     *
-     * @param response   HTTP 响应
-     * @param tableIdStr 表ID串
-     */
-    @SaCheckPermission("tool:gen:code")
-    @Log(title = "代码生成", businessType = BusinessType.GENCODE)
-    @GetMapping("/batchGenCode")
-    public void batchGenCode(HttpServletResponse response, String tableIdStr) throws IOException {
-        String[] tableIds = Convert.toStrArray(tableIdStr);
-        byte[] data = genTableService.downloadCode(tableIds);
-        genCode(response, data);
-    }
-
-    /**
-     * 将生成结果写出为 zip 文件流。
-     *
-     * @param response HTTP 响应
-     * @param data     zip 二进制数据
-     */
-    private void genCode(HttpServletResponse response, byte[] data) throws IOException {
-        response.reset();
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Expose-Headers", "Content-Disposition");
-        response.setHeader("Content-Disposition", "attachment; filename=\"ruoyi.zip\"");
-        response.addHeader("Content-Length", "" + data.length);
-        response.setContentType("application/octet-stream; charset=UTF-8");
-        IoUtil.write(response.getOutputStream(), false, data);
     }
 
     /**

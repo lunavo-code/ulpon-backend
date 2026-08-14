@@ -29,8 +29,9 @@ public class BaseTemplate implements Template {
     }
 
     public static Map<String, BaseTemplate> form(TemplateEngine templateEngine, Set<String> pathNames) {
-        return pathNames.stream().map(pathName -> BaseTemplate.form(templateEngine, pathName))
-            .collect(Collectors.toMap(BaseTemplate::getPathName, template -> template));
+        return pathNames.stream().map(pathName ->
+            BaseTemplate.form(templateEngine, pathName)
+        ).collect(Collectors.toMap(BaseTemplate::getPathName, template -> template));
     }
 
     @Override
