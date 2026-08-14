@@ -82,78 +82,6 @@ public class TemplateEngineUtils {
     }
 
     /**
-     * 构建模板上下文
-     *
-     * @param genTable 代码生成业务表对象
-     * @return 模板上下文
-     */
-    public static Dict buildContext(GenTable genTable) {
-        // 构建上下文
-        Dict context = new Dict();
-        String moduleName = genTable.getModuleName();
-        String businessName = genTable.getBusinessName();
-        String packageName = genTable.getPackageName();
-        String tplCategory = genTable.getTplCategory();
-        String functionName = genTable.getFunctionName();
-
-        context.put("tplCategory", genTable.getTplCategory());
-        context.put("frontendType", resolveFrontendType(genTable.getFrontendType()));
-        context.put("tableName", genTable.getTableName());
-        context.put("functionName", StringUtils.isNotEmpty(functionName) ? functionName : "【请填写功能名称】");
-        context.put("ClassName", genTable.getClassName());
-        context.put("className", StringUtils.uncapitalize(genTable.getClassName()));
-        context.put("moduleName", moduleName);
-        context.put("BusinessName", StringUtils.capitalize(businessName));
-        context.put("businessName", businessName);
-        context.put("basePackage", getPackagePrefix(packageName));
-        context.put("packageName", packageName);
-        context.put("author", genTable.getFunctionAuthor());
-        context.put("datetime", DateUtils.now());
-        context.put("pkColumn", genTable.getPkColumn());
-        String dicts = getDicts(genTable);
-        context.put("importList", getImportList(genTable));
-        context.put("permissionPrefix", getPermissionPrefix(moduleName, businessName));
-        context.put("columns", genTable.getColumns());
-        context.put("table", genTable);
-        context.put("dicts", dicts);
-        context.put("dictsNoSymbol", StringUtils.replace(dicts, "'", StringUtils.EMPTY));
-        setColumnFeatureContext(context, genTable, dicts);
-        // 向模板上下文写入菜单相关变量
-        String options = genTable.getOptions();
-        Dict paramsObj = JsonUtils.parseMap(options);
-        if (ObjectUtil.isNull(paramsObj)) {
-            paramsObj = new Dict();
-        }
-        String parentMenuId = getParentMenuId(paramsObj);
-        context.put("parentMenuId", parentMenuId);
-        boolean enableExport = getBooleanOption(paramsObj, GenConstants.ENABLE_EXPORT, true);
-        boolean enableStatus = getBooleanOption(paramsObj, GenConstants.ENABLE_STATUS, false);
-        boolean enableUnique = getBooleanOption(paramsObj, GenConstants.ENABLE_UNIQUE, false);
-        boolean enableSort = getBooleanOption(paramsObj, GenConstants.ENABLE_SORT, false);
-        GenTableColumn statusColumn = getColumn(genTable, paramsObj.getStr(GenConstants.STATUS_FIELD));
-        GenTableColumn sortColumn = getColumn(genTable, paramsObj.getStr(GenConstants.SORT_FIELD));
-        List<GenTableColumn> uniqueColumns = getColumns(genTable, paramsObj.get(GenConstants.UNIQUE_FIELDS));
-        context.put("enableExport", enableExport);
-        context.put("enableStatus", enableStatus && ObjectUtil.isNotNull(statusColumn));
-        context.put("statusColumn", statusColumn);
-        context.put("statusField", ObjectUtil.isNotNull(statusColumn) ? statusColumn.getJavaField() : StringUtils.EMPTY);
-        context.put("enableUnique", enableUnique && CollUtil.isNotEmpty(uniqueColumns));
-        context.put("uniqueColumns", uniqueColumns);
-        context.put("enableSort", enableSort && ObjectUtil.isNotNull(sortColumn));
-        context.put("sortColumn", sortColumn);
-        context.put("sortField", ObjectUtil.isNotNull(sortColumn) ? sortColumn.getJavaField() : StringUtils.EMPTY);
-        context.put("statusActiveValue", ObjectUtil.isNotNull(statusColumn) ? statusColumn.getSwitchActiveValue() : StringUtils.EMPTY);
-        context.put("statusInactiveValue", ObjectUtil.isNotNull(statusColumn) ? statusColumn.getSwitchInactiveValue() : StringUtils.EMPTY);
-
-        // 向树形模板上下文写入树字段相关变量
-        if (GenConstants.TPL_TREE.equals(tplCategory)) {
-            setTreeContext(context, genTable, paramsObj);
-        }
-
-        return context;
-    }
-
-    /**
      * 写入模板中常用的列派生开关，避免在模板内反复扫描和处理。
      *
      * @param context  模板上下文
@@ -566,9 +494,7 @@ public class TemplateEngineUtils {
      */
     public static void addDicts(Set<String> dicts, List<GenTableColumn> columns) {
         for (GenTableColumn column : columns) {
-            if (!column.isSuperColumn() && StringUtils.isNotEmpty(column.getDictType()) && StringUtils.equalsAny(
-                column.getHtmlType(),
-                GenConstants.HTML_SELECT, GenConstants.HTML_RADIO, GenConstants.HTML_CHECKBOX, GenConstants.HTML_SWITCH)) {
+            if (!column.isSuperColumn() && StringUtils.isNotEmpty(column.getDictType()) && StringUtils.equalsAny(column.getHtmlType(), GenConstants.HTML_SELECT, GenConstants.HTML_RADIO, GenConstants.HTML_CHECKBOX, GenConstants.HTML_SWITCH)) {
                 dicts.add("'" + column.getDictType() + "'");
             }
         }

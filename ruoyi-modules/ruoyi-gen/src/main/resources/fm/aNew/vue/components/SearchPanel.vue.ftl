@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="v" type="org.dromara.gen.domain.GenVariable" -->
+<#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
 <template>
     <div class="search-wrap">
         <el-card shadow="hover" class="search-panel" :class="{ 'is-collapsed': !showSearch }">

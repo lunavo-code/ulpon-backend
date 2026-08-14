@@ -6,6 +6,8 @@ import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.ObjectUtil;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -29,7 +31,6 @@ import org.dromara.gen.domain.GenTable;
 import org.dromara.gen.domain.GenTableColumn;
 import org.dromara.gen.mapper.GenTableColumnMapper;
 import org.dromara.gen.mapper.GenTableMapper;
-import org.dromara.gen.mapper.GenTemplateMapper;
 import org.dromara.gen.util.GenUtils;
 import org.dromara.gen.util.TemplateEngineUtils;
 import org.dromara.gen.util.template.BaseTemplate;
@@ -418,6 +419,27 @@ public class GenTableServiceImpl implements IGenTableService {
     }
 
     /**
+     * 修改保存参数校验
+     *
+     * @param genTable 业务信息
+     */
+    @Override
+    public void validateEdit(GenTable genTable) {
+        validateOptionColumns(genTable);
+        if (GenConstants.TPL_TREE.equals(genTable.getTplCategory())) {
+            String options = JsonUtils.toJsonString(genTable.getParams());
+            Dict paramsObj = JsonUtils.parseMap(options);
+            if (StringUtils.isEmpty(paramsObj.getStr(GenConstants.TREE_CODE))) {
+                throw new ServiceException("树编码字段不能为空");
+            } else if (StringUtils.isEmpty(paramsObj.getStr(GenConstants.TREE_PARENT_CODE))) {
+                throw new ServiceException("树父编码字段不能为空");
+            } else if (StringUtils.isEmpty(paramsObj.getStr(GenConstants.TREE_NAME))) {
+                throw new ServiceException("树名称字段不能为空");
+            }
+        }
+    }
+
+    /**
      * 查询表信息并生成代码
      *
      * @param tableId 业务表主键
@@ -456,8 +478,8 @@ public class GenTableServiceImpl implements IGenTableService {
         setPkColumn(table);
         Dict context = TemplateEngineUtils.buildContext(table);
 
-        List<BaseTemplate> templates = genTemplateService.getTemplateList(table.getTplCategory(), table.getDataName(), table.getFrontendType());
-//        List<BaseTemplate> templates = TemplateEngineUtils.getTemplateList(table.getTplCategory(), table.getDataName(), table.getFrontendType());
+//        List<BaseTemplate> templates = genTemplateService.getTemplateList(table.getTplCategory(), table.getDataName(), table.getFrontendType());
+        List<BaseTemplate> templates = TemplateEngineUtils.getTemplateList(table.getTplCategory(), table.getDataName(), table.getFrontendType());
         return new RenderContext<>(table, context, templates);
     }
 
@@ -469,27 +491,6 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param templates 待渲染模板
      */
     private record RenderContext<T extends BaseTemplate>(GenTable table, Dict context, List<T> templates) {
-    }
-
-    /**
-     * 修改保存参数校验
-     *
-     * @param genTable 业务信息
-     */
-    @Override
-    public void validateEdit(GenTable genTable) {
-        validateOptionColumns(genTable);
-        if (GenConstants.TPL_TREE.equals(genTable.getTplCategory())) {
-            String options = JsonUtils.toJsonString(genTable.getParams());
-            Dict paramsObj = JsonUtils.parseMap(options);
-            if (StringUtils.isEmpty(paramsObj.getStr(GenConstants.TREE_CODE))) {
-                throw new ServiceException("树编码字段不能为空");
-            } else if (StringUtils.isEmpty(paramsObj.getStr(GenConstants.TREE_PARENT_CODE))) {
-                throw new ServiceException("树父编码字段不能为空");
-            } else if (StringUtils.isEmpty(paramsObj.getStr(GenConstants.TREE_NAME))) {
-                throw new ServiceException("树名称字段不能为空");
-            }
-        }
     }
 
     /**
@@ -574,11 +575,10 @@ public class GenTableServiceImpl implements IGenTableService {
      * 批量填充业务表对应的字段列表。
      *
      * @param tables 业务表集合
-     * @return 已填充字段信息的业务表集合
      */
-    private List<GenTable> fillTableColumns(List<GenTable> tables) {
+    private void fillTableColumns(List<GenTable> tables) {
         if (CollUtil.isEmpty(tables)) {
-            return tables;
+            return;
         }
         List<Long> tableIds = StreamUtils.toList(tables, GenTable::getTableId);
         List<GenTableColumn> columns = genTableColumnMapper.lambda()
@@ -588,7 +588,6 @@ public class GenTableServiceImpl implements IGenTableService {
             .list();
         Map<Long, List<GenTableColumn>> columnMap = StreamUtils.groupByKey(columns, GenTableColumn::getTableId);
         tables.forEach(table -> table.setColumns(columnMap.getOrDefault(table.getTableId(), new ArrayList<>())));
-        return tables;
     }
 
     /**
@@ -596,7 +595,7 @@ public class GenTableServiceImpl implements IGenTableService {
      *
      * @param table 业务表信息
      */
-    public void setPkColumn(GenTable table) {
+    private void setPkColumn(GenTable table) {
         if (CollUtil.isEmpty(table.getColumns())) {
             throw new ServiceException("表【" + table.getTableName() + "】字段为空，请检查表结构");
         }
@@ -609,7 +608,6 @@ public class GenTableServiceImpl implements IGenTableService {
         if (ObjectUtil.isNull(table.getPkColumn())) {
             table.setPkColumn(table.getColumns().getFirst());
         }
-
     }
 
     /**
@@ -617,42 +615,23 @@ public class GenTableServiceImpl implements IGenTableService {
      *
      * @param genTable 设置后的生成对象
      */
-    public void setTableFromOptions(GenTable genTable) {
+    private void setTableFromOptions(GenTable genTable) {
         Dict paramsObj = JsonUtils.parseMap(genTable.getOptions());
-        if (ObjectUtil.isNull(paramsObj)) {
-            paramsObj = new Dict();
-        }
-        String treeCode = paramsObj.getStr(GenConstants.TREE_CODE);
-        String treeParentCode = paramsObj.getStr(GenConstants.TREE_PARENT_CODE);
-        String treeName = paramsObj.getStr(GenConstants.TREE_NAME);
-        Long parentMenuId = Convert.toLong(TemplateEngineUtils.getParentMenuId(paramsObj));
-        String parentMenuName = paramsObj.getStr(GenConstants.PARENT_MENU_NAME);
-        Boolean enableExport = Convert.toBool(paramsObj.get(GenConstants.ENABLE_EXPORT), true);
-        Boolean enableStatus = Convert.toBool(paramsObj.get(GenConstants.ENABLE_STATUS), false);
-        String statusField = paramsObj.getStr(GenConstants.STATUS_FIELD);
-        Boolean enableUnique = Convert.toBool(paramsObj.get(GenConstants.ENABLE_UNIQUE), false);
-        List<String> uniqueFields = Convert.toList(String.class, paramsObj.get(GenConstants.UNIQUE_FIELDS));
-        Boolean enableSort = Convert.toBool(paramsObj.get(GenConstants.ENABLE_SORT), false);
-        String sortField = paramsObj.getStr(GenConstants.SORT_FIELD);
-        String treeRootValue = paramsObj.getStr(GenConstants.TREE_ROOT_VALUE);
-        String treeAncestorsField = paramsObj.getStr(GenConstants.TREE_ANCESTORS);
-        String treeOrderField = paramsObj.getStr(GenConstants.TREE_ORDER_FIELD);
-
-        genTable.setTreeCode(treeCode);
-        genTable.setTreeParentCode(treeParentCode);
-        genTable.setTreeName(treeName);
-        genTable.setParentMenuId(parentMenuId);
-        genTable.setParentMenuName(parentMenuName);
-        genTable.setEnableExport(enableExport);
-        genTable.setEnableStatus(enableStatus);
-        genTable.setStatusField(statusField);
-        genTable.setEnableUnique(enableUnique);
-        genTable.setUniqueFields(uniqueFields);
-        genTable.setEnableSort(enableSort);
-        genTable.setSortField(sortField);
-        genTable.setTreeRootValue(treeRootValue);
-        genTable.setTreeAncestorsField(treeAncestorsField);
-        genTable.setTreeOrderField(treeOrderField);
+        genTable.setTreeCode(paramsObj.getStr(GenConstants.TREE_CODE));
+        genTable.setTreeParentCode(paramsObj.getStr(GenConstants.TREE_PARENT_CODE));
+        genTable.setTreeName(paramsObj.getStr(GenConstants.TREE_NAME));
+        genTable.setParentMenuId(Convert.toLong(TemplateEngineUtils.getParentMenuId(paramsObj)));
+        genTable.setParentMenuName(paramsObj.getStr(GenConstants.PARENT_MENU_NAME));
+        genTable.setEnableExport(Convert.toBool(paramsObj.get(GenConstants.ENABLE_EXPORT), true));
+        genTable.setEnableStatus(Convert.toBool(paramsObj.get(GenConstants.ENABLE_STATUS), false));
+        genTable.setStatusField(paramsObj.getStr(GenConstants.STATUS_FIELD));
+        genTable.setEnableUnique(Convert.toBool(paramsObj.get(GenConstants.ENABLE_UNIQUE), false));
+        genTable.setUniqueFields(Convert.toList(String.class, paramsObj.get(GenConstants.UNIQUE_FIELDS)));
+        genTable.setEnableSort(Convert.toBool(paramsObj.get(GenConstants.ENABLE_SORT), false));
+        genTable.setSortField(paramsObj.getStr(GenConstants.SORT_FIELD));
+        genTable.setTreeRootValue(paramsObj.getStr(GenConstants.TREE_ROOT_VALUE));
+        genTable.setTreeAncestorsField(paramsObj.getStr(GenConstants.TREE_ANCESTORS));
+        genTable.setTreeOrderField(paramsObj.getStr(GenConstants.TREE_ORDER_FIELD));
     }
 
 }

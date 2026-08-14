@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="v" type="org.dromara.gen.domain.GenVariable" -->
+<#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
 <el-form ref="${v.businessNameLower}FormRef" :model="form" :rules="rules" label-width="80px">
     <#list v.columns?filter(col -> (col.insert || col.edit) && !col.pk) as column>
         <#if column.htmlType == "input">

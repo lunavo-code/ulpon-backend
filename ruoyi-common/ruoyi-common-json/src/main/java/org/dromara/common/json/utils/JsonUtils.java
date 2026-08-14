@@ -108,7 +108,7 @@ public class JsonUtils {
      */
     public static Dict parseMap(String text) {
         if (StringUtils.isBlank(text)) {
-            return null;
+            return Dict.create();
         }
         return JSON_MAPPER.readValue(text, JSON_MAPPER.getTypeFactory().constructType(Dict.class));
     }

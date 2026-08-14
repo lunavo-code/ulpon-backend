@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="v" type="org.dromara.gen.domain.GenVariable" -->
+<#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
 <template>
     <el-card shadow="hover" class="table-panel">
         <template slot="header">

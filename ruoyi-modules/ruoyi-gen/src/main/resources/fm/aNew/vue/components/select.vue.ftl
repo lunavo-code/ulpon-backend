@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="v" type="org.dromara.gen.domain.GenVariable" -->
+<#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
 <template>
     <el-select
         v-model="model"

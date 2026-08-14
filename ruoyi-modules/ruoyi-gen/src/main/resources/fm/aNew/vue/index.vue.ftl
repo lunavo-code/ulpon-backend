@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="v" type="org.dromara.gen.domain.GenVariable" -->
+<#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
 <template>
     <div class="p-2 app-container ${v.moduleName}-${v.businessName}-page">
         <!-- 筛选组件（自定义展示字段与显示顺序） -->

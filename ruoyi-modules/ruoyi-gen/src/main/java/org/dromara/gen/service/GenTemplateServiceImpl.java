@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.gen.domain.GenTemplate;
 import org.dromara.gen.mapper.GenTemplateMapper;
+import org.dromara.gen.util.template.BaseTemplate;
 import org.dromara.gen.util.template.DBTemplate;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +23,7 @@ public class GenTemplateServiceImpl extends ServiceImpl<GenTemplateMapper, GenTe
     private final GenTemplateMapper genTemplateMapper;
 
     @Override
-    public List<DBTemplate> getTemplateList(String tplCategory, String dsName, String frontendType) {
-
+    public <T extends BaseTemplate> List<T> getTemplateList(String tplCategory, String dsName, String frontendType) {
         // 模板引擎初始化
         TemplateConfig templateConfig = new TemplateConfig(StandardCharsets.UTF_8, StringUtils.EMPTY, TemplateConfig.ResourceMode.CLASSPATH);
         templateConfig.setCustomEngine(FreemarkerEngine.class);
