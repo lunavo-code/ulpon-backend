@@ -1,8 +1,14 @@
 package org.dromara.gen.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum TemplateCategoryEnum {
-    java, xml,
-    sql_mysql, sql_oracle, sql_postgre, sql_sqlserver,
+    java,
+    xml,
+    sql,
     react,
     react_tree,
     vue,

@@ -1,5 +1,6 @@
 package org.dromara.gen.domain;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.Dict;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -289,7 +290,15 @@ public class GenTable extends BaseEntity {
         treeCode = paramsObj.getStr(GenConstants.TREE_CODE);
         treeParentCode = paramsObj.getStr(GenConstants.TREE_PARENT_CODE);
         treeName = paramsObj.getStr(GenConstants.TREE_NAME);
-        parentMenuId = Convert.toLong(TemplateEngineUtils.getParentMenuId(paramsObj));
+
+        if (CollUtil.isNotEmpty(paramsObj) && paramsObj.containsKey(GenConstants.PARENT_MENU_ID)
+            && StringUtils.isNotEmpty(paramsObj.getStr(GenConstants.PARENT_MENU_ID))) {
+            parentMenuId = Convert.toLong(paramsObj.getStr(GenConstants.PARENT_MENU_ID));
+        } else {
+            parentMenuId = 1761400000000000003L;
+        }
+
+//        parentMenuId = Convert.toLong(TemplateEngineUtils.getParentMenuId(paramsObj));
         parentMenuName = paramsObj.getStr(GenConstants.PARENT_MENU_NAME);
         enableExport = Convert.toBool(paramsObj.get(GenConstants.ENABLE_EXPORT), true);
         enableStatus = Convert.toBool(paramsObj.get(GenConstants.ENABLE_STATUS), false);

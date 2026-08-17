@@ -23,6 +23,11 @@ import java.util.Set;
 public class GenBaseVariable {
 
     /**
+     * 数据源名称
+     */
+    private String dataName;
+
+    /**
      * 基础包名。
      * <p>表示项目的基础 Java 包路径，例如：
      * <p>
@@ -138,14 +143,6 @@ public class GenBaseVariable {
      * 用于动态生成目标 Java 文件中的 {@code import} 语句。</p>
      */
     private Set<String> importList;
-
-    /**
-     * 父级菜单 ID。
-     * <p>表示生成菜单时使用的父级菜单标识，
-     * <p>
-     * 用于确定当前业务菜单在系统菜单树中的位置。</p>
-     */
-    private String parentMenuId;
 
     public GenBaseVariable(GenTable table) {
         this.tplCategory = table.getTplCategory();

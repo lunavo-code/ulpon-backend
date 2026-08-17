@@ -6,7 +6,9 @@ import cn.hutool.core.util.ObjectUtil;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.utils.StreamUtils;
+import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.utils.IdGeneratorUtil;
+import org.dromara.gen.constant.GenConstants;
 import org.dromara.gen.domain.GenTable;
 import org.dromara.gen.domain.GenTableColumn;
 import org.dromara.gen.domain.RenderContext;
@@ -29,6 +31,10 @@ public class GenCodeService {
     private final GenTableColumnMapper tableColumnMapper;
 
     private final Map<TemplateCategoryEnum, List<BaseTemplate>> templateMapperCache;
+
+    private static final String BASE_BACKEND_WITH_DIR = "backend/src/main";
+
+    private static final String BASE_FRONT_WITH_DIR = "frontend/src";
 
     public GenTable getGenTable(Long tableId) {
         return getGenTable(Set.of(tableId)).getFirst();
@@ -58,9 +64,10 @@ public class GenCodeService {
         // 设置主键列
         setPkColumn(table);
         // 构建变量上下文
-        Dict veriableDict = Dict.of("v", new GenVariable(table));
+        GenVariable genVariable = new GenVariable(table);
+        Dict veriableDict = Dict.of("v", genVariable);
         // 获取模板列表
-        List<BaseTemplate> templates = getTemplateList(table.getTplCategory(), table.getDataName(), table.getFrontendType());
+        List<BaseTemplate> templates = getTemplateList(genVariable);
         return new RenderContext<>(table, veriableDict, templates);
     }
 
@@ -68,7 +75,8 @@ public class GenCodeService {
      * 设置主键列
      */
     private void setPkColumn(GenTable table) {
-        if (CollUtil.isEmpty(table.getColumns())) throw new ServiceException("表【" + table.getTableName() + "】字段为空，请检查表结构");
+        if (CollUtil.isEmpty(table.getColumns()))
+            throw new ServiceException("表【" + table.getTableName() + "】字段为空，请检查表结构");
         for (GenTableColumn column : table.getColumns()) {
             if (!column.isPk()) continue;
             table.setPkColumn(column);
@@ -81,9 +89,9 @@ public class GenCodeService {
      * 生成菜单sql主键
      */
     private void setMenuId(GenTable table) {
-        List<Long> menuIds = new ArrayList<>(6);
+        List<Long> menuIds = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
-            menuIds.set(i, IdGeneratorUtil.nextLongId());
+            menuIds.add(IdGeneratorUtil.nextLongId());
         }
         table.setMenuIds(menuIds);
     }
@@ -91,31 +99,49 @@ public class GenCodeService {
     /**
      * 获取模板列表
      */
-    private List<BaseTemplate> getTemplateList(String tplCategory, String dsName, String frontendType) {
+    private List<BaseTemplate> getTemplateList(GenVariable genVariable) {
+        String tplCategory = genVariable.getBase().getTplCategory();
+        String frontendType = genVariable.getBase().getFrontendType();
+        String businessNameUpper = genVariable.getBase().getBusinessNameUpper();
+
+        String packageName = genVariable.getBase().getPackageName().replace(".", "/");
+        String moduleName = genVariable.getBase().getModuleName();
+
         List<BaseTemplate> templates = new ArrayList<>();
         // 后端源码模板
-        templates.addAll(templateMapperCache.get(TemplateCategoryEnum.java));
+        templates.addAll(getTemplates(TemplateCategoryEnum.java, BASE_BACKEND_WITH_DIR + "/" + packageName, businessNameUpper));
         // MyBatis MapperXML 模板
-        templates.addAll(templateMapperCache.get(TemplateCategoryEnum.xml));
-        // 前端 API 与类型模板
-        templates.addAll(templateMapperCache.get(TemplateCategoryEnum.vue));
-        templates.addAll(templateMapperCache.get(TemplateCategoryEnum.react));
-        templates.addAll(templateMapperCache.get(TemplateCategoryEnum.vue_tree));
-        templates.addAll(templateMapperCache.get(TemplateCategoryEnum.react_tree));
+        templates.addAll(getTemplates(TemplateCategoryEnum.xml, BASE_BACKEND_WITH_DIR + "/resources/mapper", businessNameUpper));
         // 数据库模板
-        switch (dsName) {
-            case "postgresql" -> templates.addAll(templateMapperCache.get(TemplateCategoryEnum.sql_postgre));
-            case "oracle" -> templates.addAll(templateMapperCache.get(TemplateCategoryEnum.sql_oracle));
-            case "sqlserver" -> templates.addAll(templateMapperCache.get(TemplateCategoryEnum.sql_sqlserver));
-            default -> templates.addAll(templateMapperCache.get(TemplateCategoryEnum.sql_mysql));
-        }
+        templates.addAll(getTemplates(TemplateCategoryEnum.sql, BASE_BACKEND_WITH_DIR + "/resources/sql", businessNameUpper));
+        // 前端 API 与类型模板
 
+        // 前端页面
         switch (tplCategory + ":" + frontendType) {
-            case "TPL_CRUD:react" -> templates.addAll(templateMapperCache.get(TemplateCategoryEnum.react));
-            case "TPL_TREE:react" -> templates.addAll(templateMapperCache.get(TemplateCategoryEnum.react_tree));
-            case "TPL_TREE:vue" -> templates.addAll(templateMapperCache.get(TemplateCategoryEnum.vue_tree));
-            default -> templates.addAll(templateMapperCache.get(TemplateCategoryEnum.vue));
+            case "TPL_CRUD:react" -> {
+                templates.addAll(getTemplates(TemplateCategoryEnum.react, BASE_FRONT_WITH_DIR, moduleName));
+            }
+            case "TPL_TREE:react" -> {
+                templates.addAll(getTemplates(TemplateCategoryEnum.react_tree, BASE_FRONT_WITH_DIR, moduleName));
+            }
+            case "TPL_TREE:vue" -> {
+                templates.addAll(getTemplates(TemplateCategoryEnum.vue_tree, BASE_FRONT_WITH_DIR, moduleName));
+            }
+            default -> {
+                templates.addAll(getTemplates(TemplateCategoryEnum.vue, BASE_FRONT_WITH_DIR, moduleName));
+            }
         }
         return templates;
+    }
+
+    private List<BaseTemplate> getTemplates(TemplateCategoryEnum templateCategoryEnum, String withDir, String business) {
+        List<BaseTemplate> list = templateMapperCache.get(templateCategoryEnum);
+        String s = GenConstants.TEMPLATE_ROOT_PATH + templateCategoryEnum;
+        list.forEach(i -> {
+            String pathName = i.getPathName();
+            pathName = pathName.replace("business", business).replace(".ftl", StringUtils.EMPTY);
+            i.setExportFilePath(withDir + pathName.substring(s.length() + 1));
+        });
+        return list;
     }
 }

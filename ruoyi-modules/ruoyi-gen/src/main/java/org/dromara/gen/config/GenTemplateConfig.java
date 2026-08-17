@@ -50,13 +50,16 @@ public class GenTemplateConfig {
 
     public List<BaseTemplate> templateMap(TemplateEngine templateEngine, ResourcePatternResolver resolver, String d) {
         try {
-            String locationPattern = "classpath*:/%s/%s/**/*.ftl".formatted(GenConstants.TEMPLATE_ROOT_PATH, d);
+            String templateRootPath = GenConstants.TEMPLATE_ROOT_PATH;
+            String pathPreStr = templateRootPath + "/" + d;
+            String locationPattern = "classpath*:/%s/%s/**/*.ftl".formatted(templateRootPath, d);
             Resource[] resources = resolver.getResources(locationPattern);
             return Arrays.stream(resources).map(resource -> {
                 try {
                     String path = resource.getURL().toString();
-                    int i = path.indexOf(GenConstants.TEMPLATE_ROOT_PATH);
-                    return i > 0 ? BaseTemplate.form(templateEngine, path.substring(i)) : null;
+                    int i = path.indexOf(templateRootPath);
+                    String pathname = path.substring(i);
+                    return i > 0 ? BaseTemplate.form(templateEngine, pathname, pathPreStr) : null;
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

@@ -1,9 +1,10 @@
-package ${packageName}.domain.vo;
+<#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
+package ${v.base.packageName}.domain.vo;
 
-<#list importList as import>
+<#list v.base.importList as import>
 import ${import};
 </#list>
-import ${packageName}.domain.${ClassName};
+import ${v.base.packageName}.domain.${v.base.classNameUpper};
 import org.apache.fesod.sheet.annotation.ExcelIgnoreUnannotated;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.dromara.common.excel.annotation.ExcelDictFormat;
@@ -18,20 +19,20 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * ${functionName}视图对象 ${tableName}
+ * ${v.base.functionName}视图对象 ${v.base.tableName}
  *
- * @author ${author}
- * @date ${datetime}
+ * @author ${v.base.author}
+ * @date ${v.base.datetime}
  */
 @Data
 @ExcelIgnoreUnannotated
-@AutoMapper(target = ${ClassName}.class)
-public class ${ClassName}Vo implements Serializable {
+@AutoMapper(target = ${v.base.classNameUpper}.class)
+public class ${v.base.classNameUpper}Vo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-<#list columns as column>
+<#list v.column.columns as column>
 <#if column.list>
     /**
      * ${column.columnComment}

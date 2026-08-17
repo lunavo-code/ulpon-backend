@@ -450,7 +450,9 @@ public class GenTableServiceImpl implements IGenTableService {
             String pathName = template.getPathName();
             try {
                 String render = template.render(rc.context());
-                zip.putNextEntry(new ZipEntry(TemplateEngineUtils.getFileName(pathName, table)));
+//                zip.putNextEntry(new ZipEntry(TemplateEngineUtils.getFileName(pathName, table)));
+                String exportFilePath = template.getExportFilePath();
+                zip.putNextEntry(new ZipEntry(exportFilePath));
                 IoUtil.write(zip, StandardCharsets.UTF_8, false, render);
                 zip.flush();
                 zip.closeEntry();

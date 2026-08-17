@@ -1,36 +1,37 @@
-package ${packageName}.domain.bo;
+<#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
+package ${v.base.packageName}.domain.bo;
 
-import ${packageName}.domain.${ClassName};
+import ${v.base.packageName}.domain.${v.base.classNameUpper};
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
 import io.github.linpeilie.annotations.AutoMapper;
 import java.io.Serial;
 import java.io.Serializable;
-<#if hasBetween>
+<#if v.column.hasBetween>
 import java.util.HashMap;
 import java.util.Map;
 </#if>
 import lombok.Data;
 import jakarta.validation.constraints.*;
-<#list importList as import>
+<#list v.base.importList as import>
 import ${import};
 </#list>
 
 /**
- * ${functionName}业务对象 ${tableName}
+ * ${v.base.functionName}业务对象 ${v.base.tableName}
  *
- * @author ${author}
- * @date ${datetime}
+ * @author ${v.base.author}
+ * @date ${v.base.datetime}
  */
 @Data
-@AutoMapper(target = ${ClassName}.class, reverseConvertGenerate = false)
-public class ${ClassName}Bo implements Serializable {
+@AutoMapper(target = ${v.base.classNameUpper}.class, reverseConvertGenerate = false)
+public class ${v.base.classNameUpper}Bo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-<#list columns as column>
-<#if column.query || (!table.isSuperColumn(column.javaField) && (column.insert || column.edit))>
+<#list v.column.columns as column>
+<#if column.query || (!v.column.table.isSuperColumn(column.javaField) && (column.insert || column.edit))>
     /**
      * ${column.columnComment}
      */
@@ -41,7 +42,7 @@ public class ${ClassName}Bo implements Serializable {
 <#elseif column.edit>
 <#assign Group = "EditGroup.class">
 </#if>
-<#if column.required && !table.isSuperColumn(column.javaField) && (column.insert || column.edit)>
+<#if column.required && !v.column.table.isSuperColumn(column.javaField) && (column.insert || column.edit)>
 <#if column.javaType == 'String'>
     @NotBlank(message = "${column.columnComment}不能为空", groups = { ${Group} })
 <#else>
@@ -52,7 +53,7 @@ public class ${ClassName}Bo implements Serializable {
 
 </#if>
 </#list>
-<#if hasBetween>
+<#if v.column.hasBetween>
     /**
      * 查询参数
      */
