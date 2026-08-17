@@ -15,7 +15,7 @@
 
 <script setup name="${v.base.businessNameUpper}" lang="ts">
     import { ref } from 'vue';
-    import SearchPanel from './components/SearchPanel.vue';
+    import SearchPanel from './components/SearchPanel.vue.ftl';
     import TablePanel from './components/TablePanel.vue';
     import DetailDialog from './components/DetailDialog.vue';
 

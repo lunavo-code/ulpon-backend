@@ -19,10 +19,9 @@ import org.dromara.gen.mapper.GenTableMapper;
 import org.dromara.gen.util.template.BaseTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -102,34 +101,27 @@ public class GenCodeService {
     private List<BaseTemplate> getTemplateList(GenVariable genVariable) {
         String tplCategory = genVariable.getBase().getTplCategory();
         String frontendType = genVariable.getBase().getFrontendType();
-        String businessNameUpper = genVariable.getBase().getBusinessNameUpper();
+        String classNameUpper = genVariable.getBase().getClassNameUpper();
+        String businessNameLower = genVariable.getBase().getBusinessNameLower();
 
         String packageName = genVariable.getBase().getPackageName().replace(".", "/");
         String moduleName = genVariable.getBase().getModuleName();
 
         List<BaseTemplate> templates = new ArrayList<>();
         // 后端源码模板
-        templates.addAll(getTemplates(TemplateCategoryEnum.java, BASE_BACKEND_WITH_DIR + "/" + packageName, businessNameUpper));
+        templates.addAll(getTemplates(TemplateCategoryEnum.java, BASE_BACKEND_WITH_DIR + "/java/" + packageName, classNameUpper));
         // MyBatis MapperXML 模板
-        templates.addAll(getTemplates(TemplateCategoryEnum.xml, BASE_BACKEND_WITH_DIR + "/resources/mapper", businessNameUpper));
+        templates.addAll(getTemplates(TemplateCategoryEnum.xml, BASE_BACKEND_WITH_DIR + "/resources/mapper", classNameUpper));
         // 数据库模板
-        templates.addAll(getTemplates(TemplateCategoryEnum.sql, BASE_BACKEND_WITH_DIR + "/resources/sql", businessNameUpper));
+        templates.addAll(getTemplates(TemplateCategoryEnum.sql, BASE_BACKEND_WITH_DIR + "/resources/sql", classNameUpper));
         // 前端 API 与类型模板
 
         // 前端页面
         switch (tplCategory + ":" + frontendType) {
-            case "TPL_CRUD:react" -> {
-                templates.addAll(getTemplates(TemplateCategoryEnum.react, BASE_FRONT_WITH_DIR, moduleName));
-            }
-            case "TPL_TREE:react" -> {
-                templates.addAll(getTemplates(TemplateCategoryEnum.react_tree, BASE_FRONT_WITH_DIR, moduleName));
-            }
-            case "TPL_TREE:vue" -> {
-                templates.addAll(getTemplates(TemplateCategoryEnum.vue_tree, BASE_FRONT_WITH_DIR, moduleName));
-            }
-            default -> {
-                templates.addAll(getTemplates(TemplateCategoryEnum.vue, BASE_FRONT_WITH_DIR, moduleName));
-            }
+            case "TPL_CRUD:react" -> templates.addAll(getTemplates(TemplateCategoryEnum.react, BASE_FRONT_WITH_DIR, "/" + moduleName + "/" + businessNameLower));
+            case "TPL_TREE:react" -> templates.addAll(getTemplates(TemplateCategoryEnum.react_tree, BASE_FRONT_WITH_DIR, "/" + moduleName + "/" + businessNameLower));
+            case "TPL_TREE:vue" -> templates.addAll(getTemplates(TemplateCategoryEnum.vue_tree, BASE_FRONT_WITH_DIR, "/" + moduleName + "/" + businessNameLower));
+            default -> templates.addAll(getTemplates(TemplateCategoryEnum.vue, BASE_FRONT_WITH_DIR, "/" + moduleName + "/" + businessNameLower));
         }
         return templates;
     }
@@ -139,7 +131,7 @@ public class GenCodeService {
         String s = GenConstants.TEMPLATE_ROOT_PATH + templateCategoryEnum;
         list.forEach(i -> {
             String pathName = i.getPathName();
-            pathName = pathName.replace("business", business).replace(".ftl", StringUtils.EMPTY);
+            pathName = pathName.replace("ModuleNameBusiness", business).replace("business", business).replace(".ftl", StringUtils.EMPTY);
             i.setExportFilePath(withDir + pathName.substring(s.length() + 1));
         });
         return list;
