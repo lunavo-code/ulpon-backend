@@ -57,6 +57,7 @@
 </template>
 
 <script setup name="${v.getBase().getBusinessNameUpper()}Select" lang="ts">
+    import { PropType } from 'vue';
     import { useDebounceFn } from '@vueuse/core';
     import { list${v.getBase().getBusinessNameUpper()} } from '@/api/${v.base.moduleName}/${v.base.businessNameLower}';
     import { ${v.getBase().getBusinessNameUpper()}VO } from '@/api/${v.base.moduleName}/${v.base.businessNameLower}/types';
@@ -242,7 +243,7 @@
     };
 
     // 获取下拉滚动容器 DOM
-    const getScrollWrap = () => document.querySelector(${r'`.${uniqueClass}'} .el-select-dropdown__wrap);
+    const getScrollWrap = () => document.querySelector(${r'`.${uniqueClass}'} .el-select-dropdown__wrap`);
 
     /** 动态绑定滚动监听器（解决懒加载 DOM 竞态问题，防重复监听） */
     const bindScrollListener = () => {
