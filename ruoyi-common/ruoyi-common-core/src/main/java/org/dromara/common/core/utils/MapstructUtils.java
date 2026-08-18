@@ -6,6 +6,7 @@ import cn.hutool.core.util.ObjectUtil;
 import io.github.linpeilie.Converter;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.dromara.common.core.exception.base.BaseException;
 
 import java.util.List;
 import java.util.Map;
@@ -30,10 +31,12 @@ public class MapstructUtils {
      */
     public static <T, V> V convert(T source, Class<V> desc) {
         if (ObjectUtil.isNull(source)) {
-            return null;
+//            return null;
+            throw new BaseException("数据来源实体为null");
         }
         if (ObjectUtil.isNull(desc)) {
-            return null;
+//            return null;
+            throw new BaseException("转换后的对象为null");
         }
         return CONVERTER.convert(source, desc);
     }
