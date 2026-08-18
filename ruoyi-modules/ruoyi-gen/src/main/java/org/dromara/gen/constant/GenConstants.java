@@ -1,9 +1,5 @@
 package org.dromara.gen.constant;
 
-import cn.hutool.core.collection.CollUtil;
-
-import java.util.Set;
-
 /**
  * 代码生成通用常量
  *
@@ -135,12 +131,14 @@ public interface GenConstants {
     /**
      * BO对象 不需要添加字段
      */
-    String[] COLUMNNAME_NOT_ADD = {"del_flag", "version"};
+    String[] COLUMNNAME_NOT_ADD = {"create_dept", "create_by", "create_time", "del_flag", "update_by",
+        "update_time", "version"};
 
     /**
      * BO对象 不需要编辑字段
      */
-    String[] COLUMNNAME_NOT_EDIT = {"del_flag", "version"};
+    String[] COLUMNNAME_NOT_EDIT = {"create_dept", "create_by", "create_time", "del_flag", "update_by",
+        "update_time", "version"};
 
     /**
      * VO对象 不需要返回字段
@@ -151,7 +149,8 @@ public interface GenConstants {
     /**
      * BO对象 不需要查询字段
      */
-    String[] COLUMNNAME_NOT_QUERY = {"id", "del_flag", "remark", "version"};
+    String[] COLUMNNAME_NOT_QUERY = {"id", "remark", "create_dept", "create_by", "create_time", "del_flag", "update_by",
+        "update_time", "version"};
 
     /**
      * Entity基类字段
