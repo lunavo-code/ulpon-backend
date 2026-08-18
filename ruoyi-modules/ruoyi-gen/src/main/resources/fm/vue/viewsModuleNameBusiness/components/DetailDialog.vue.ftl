@@ -113,7 +113,7 @@
                 </#if>
             </#list>
         </el-form>
-        <template slot="footer">
+        <template #footer>
             <div class="dialog-footer">
                 <el-button :loading="buttonLoading" type="primary" @click="submitForm">确 定</el-button>
                 <el-button @click="cancel">取 消</el-button>
@@ -130,11 +130,16 @@
     } from '@/api/${v.base.moduleName}/${v.base.businessNameLower}';
 
     import { ElForm } from 'element-plus';
-    import { ${v.base.businessNameUpper}Form } from '@/api/${v.base.businessNameLower}/${v.base.businessNameLower}/types';
+    import { ${v.base.businessNameUpper}Form } from '@/api/${v.base.moduleName}/${v.base.businessNameLower}/types';
     import { useFormDialog } from '@/hooks/dialog/useFormDialog';
     import modal from '@/plugins/modal';
+    <#if v.column.needDict>
+    import { useDict } from '@/utils/dict';
+    </#if>
 
     type ElFormInstance = InstanceType<typeof ElForm>;
+
+    const { ${v.column.dictsNoSymbol} } = toRefs<any>(useDict(${v.column.dicts}));
 
     const emit = defineEmits(['success']);
 
@@ -157,7 +162,7 @@
         rules: {
             <#list v.column.columns?filter(col -> col.insert || col.edit) as column>
             <#if column.required>
-            ${column.javaField}: [{ required: true, message: '${column.columnLabel}不能为空', trigger: <#if column.htmlType == "select" || column.htmlType == "radio" || column.htmlType == "switch" || column.htmlType == "inputNumber">"change"<#else>"blur"</#if> }]
+            ${column.javaField}: [{ required: true, message: '${column.columnLabel}不能为空', trigger: <#if column.htmlType == "select" || column.htmlType == "radio" || column.htmlType == "switch" || column.htmlType == "inputNumber">"change"<#else>"blur"</#if> }],
             </#if>
             </#list>
         }

@@ -1,7 +1,7 @@
 <#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
 <template>
     <el-card shadow="hover" class="table-panel">
-        <template slot="header">
+        <template #header>
             <div class="toolbar-shell">
                 <div class="table-heading"><h3>${v.base.functionName}列表</h3></div>
                 <div class="toolbar-actions">
@@ -159,6 +159,9 @@
     import {useTableSelection} from '@/hooks/table/useTableSelection';
     import modal from '@/plugins/modal';
     import {download as requestDownload} from '@/utils/request';
+    <#if v.column.needDict>
+    import { useDict } from '@/utils/dict';
+    </#if>
 
     // 扩展字段属性接口
     interface TableFieldOption extends FieldOption {
@@ -197,6 +200,8 @@
         {prop: '${column.javaField}', label: '${column.columnLabel}', index: ${column?index}},
         </#list>
     ];
+
+    const { ${v.column.dictsNoSymbol} } = toRefs<any>(useDict(${v.column.dicts}));
 
     // 用于 right-toolbar 显隐列勾选框的数据源
     const columns = ref<TableFieldOption[]> ([]);

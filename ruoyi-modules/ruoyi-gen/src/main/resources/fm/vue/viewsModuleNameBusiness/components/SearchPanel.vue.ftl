@@ -2,7 +2,7 @@
 <template>
     <div class="search-wrap">
         <el-card shadow="hover" class="search-panel" :class="{ 'is-collapsed': !showSearch }">
-            <template slot="header">
+            <template #header>
                 <div class="panel-heading search-panel-toggle" @click.stop="toggleSearch">
                     <div><h3>筛选条件</h3></div>
                 </div>
