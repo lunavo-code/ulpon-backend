@@ -238,16 +238,14 @@
 
     /** 查询${v.base.functionName}列表 */
     const getList = async () => {
+        <#--await withLoading(async () => {-->
+        <#--    const res = await list${v.base.businessNameUpper}(queryParams);-->
+        <#--    ${v.base.businessNameLower}List.value = res.data?.rows || [];-->
+        <#--    total.value = res.data?.total || 0;-->
+        <#--});-->
         await withLoading(async () => {
-            const res = await list${v.base.businessNameUpper}(queryParams);
-            ${v.base.businessNameLower}List.value = res.data?.rows || [];
-            total.value = res.data?.total || 0;
-        });
-
-
-        await withLoading(async () => {
-            <#if v.column.needAddDateRange>
             let params = queryParams.value;
+            <#if v.column.needAddDateRange>
             <#list v.column.columns as column>
             <#if column.htmlType == "datetime" && column.queryType == "BETWEEN" && column.query>
             params = apply${column.capJavaField}DateRange(params);
@@ -286,13 +284,13 @@
     };
 
     const handleUpdate = (row?: any) => {
-        const id = row?.id || ids.value[0];
+        const id = row?.${v.column.pkColumn.javaField} || ids.value[0];
         emit('edit', id);
     };
 
     /** 删除按钮操作 */
     const handleDelete = async (row?: any) => {
-        const _${v.column.pkColumn.javaField}s = row?.id ? [row.id] : ids.value;
+        const targetIds = row?.${v.column.pkColumn.javaField} ? [row.${v.column.pkColumn.javaField}] : ids.value;
         await modal.confirm('是否确认删除测试单编号为"' + targetIds + '"的数据项？');
         await withLoading(async () => {
             await del${v.base.businessNameUpper}(targetIds);

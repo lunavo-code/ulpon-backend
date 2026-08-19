@@ -8,15 +8,15 @@ import lombok.EqualsAndHashCode;
 import java.io.Serial;
 
 /**
- * 核心词管理对象 geo_keyword
+ * 派生标题管理对象 geo_keyword_derived
  *
  * @author Ulpon
  * @date 2026-08-20 06:16:32
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("geo_keyword")
-public class GeoKeyword extends BaseEntity {
+@TableName("geo_keyword_derived")
+public class GeoKeywordDerived extends BaseEntity {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -24,26 +24,26 @@ public class GeoKeyword extends BaseEntity {
     /**
      * 主键ID
      */
-    @TableId(value = "keyword_id")
+    @TableId(value = "derived_id")
+    private Long derivedId;
+
+    /**
+     * 关联核心词ID
+     */
     private Long keywordId;
 
     /**
-     * 公司/品牌名称
+     * 标题类型
      */
-    private String companyName;
+    private String titleType;
 
     /**
-     * 关键词分类
+     * 生成的文章标题/用户提问内容
      */
-    private String keywordType;
+    private String derivedQuestion;
 
     /**
-     * 核心关键词
-     */
-    private String keyword;
-
-    /**
-     * 状态(0启用 1停用)
+     * 状态(0待创作 1已创作 2已禁用)
      */
     private String status;
 

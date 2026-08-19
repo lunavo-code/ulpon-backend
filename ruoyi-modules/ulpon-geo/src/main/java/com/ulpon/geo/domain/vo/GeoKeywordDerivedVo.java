@@ -1,6 +1,6 @@
 package com.ulpon.geo.domain.vo;
 
-import com.ulpon.geo.domain.GeoKeyword;
+import com.ulpon.geo.domain.GeoKeywordDerived;
 import org.apache.fesod.sheet.annotation.ExcelIgnoreUnannotated;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.dromara.common.excel.annotation.ExcelDictFormat;
@@ -15,15 +15,15 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 核心词管理视图对象 geo_keyword
+ * 派生标题管理视图对象 geo_keyword_derived
  *
  * @author Ulpon
  * @date 2026-08-20 06:16:32
  */
 @Data
 @ExcelIgnoreUnannotated
-@AutoMapper(target = GeoKeyword.class)
-public class GeoKeywordVo implements Serializable {
+@AutoMapper(target = GeoKeywordDerived.class)
+public class GeoKeywordDerivedVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -32,31 +32,31 @@ public class GeoKeywordVo implements Serializable {
      * 主键ID
      */
     @ExcelProperty(value = "主键ID")
+    private Long derivedId;
+
+    /**
+     * 关联核心词ID
+     */
+    @ExcelProperty(value = "关联核心词ID")
     private Long keywordId;
 
     /**
-     * 公司/品牌名称
+     * 标题类型
      */
-    @ExcelProperty(value = "公司/品牌名称")
-    private String companyName;
+    @ExcelProperty(value = "标题类型", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "geo_title_type")
+    private String titleType;
 
     /**
-     * 关键词分类
+     * 生成的文章标题/用户提问内容
      */
-    @ExcelProperty(value = "关键词分类", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(dictType = "geo_keyword_type")
-    private String keywordType;
+    @ExcelProperty(value = "生成的文章标题/用户提问内容")
+    private String derivedQuestion;
 
     /**
-     * 核心关键词
+     * 状态(0待创作 1已创作 2已禁用)
      */
-    @ExcelProperty(value = "核心关键词")
-    private String keyword;
-
-    /**
-     * 状态(0启用 1停用)
-     */
-    @ExcelProperty(value = "状态(0启用 1停用)", converter = ExcelDictConvert.class)
+    @ExcelProperty(value = "状态(0待创作 1已创作 2已禁用)", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_normal_disable")
     private String status;
 

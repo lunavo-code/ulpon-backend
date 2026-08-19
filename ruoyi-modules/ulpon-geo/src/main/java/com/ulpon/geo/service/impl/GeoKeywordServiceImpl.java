@@ -23,10 +23,10 @@ import java.util.Map;
 import java.util.Collection;
 
 /**
- * 核心关键词Service业务层处理
+ * 核心词管理Service业务层处理
  *
  * @author Ulpon
- * @date 2026-08-09 12:53:08
+ * @date 2026-08-20 06:16:32
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -36,22 +36,22 @@ public class GeoKeywordServiceImpl implements IGeoKeywordService {
     private final GeoKeywordMapper geoKeywordMapper;
 
     /**
-     * 查询核心关键词
+     * 查询核心词管理
      *
-     * @param id 主键
-     * @return 核心关键词
+     * @param keywordId 主键
+     * @return 核心词管理
      */
     @Override
-    public GeoKeywordVo queryById(Long id) {
-        return geoKeywordMapper.selectVoById(id);
+    public GeoKeywordVo queryById(Long keywordId) {
+        return geoKeywordMapper.selectVoById(keywordId);
     }
 
     /**
-     * 分页查询核心关键词列表
+     * 分页查询核心词管理列表
      *
      * @param bo        查询条件
      * @param pageQuery 分页参数
-     * @return 核心关键词分页列表
+     * @return 核心词管理分页列表
      */
     @Override
     public PageResult<GeoKeywordVo> queryPageList(GeoKeywordBo bo, PageQuery pageQuery) {
@@ -61,10 +61,10 @@ public class GeoKeywordServiceImpl implements IGeoKeywordService {
     }
 
     /**
-     * 查询符合条件的核心关键词列表
+     * 查询符合条件的核心词管理列表
      *
      * @param bo 查询条件
-     * @return 核心关键词列表
+     * @return 核心词管理列表
      */
     @Override
     public List<GeoKeywordVo> queryList(GeoKeywordBo bo) {
@@ -75,17 +75,18 @@ public class GeoKeywordServiceImpl implements IGeoKeywordService {
 
     private LambdaQueryWrapper<GeoKeyword> buildQueryWrapper(GeoKeywordBo bo) {
         return QueryBuilder.lambda(GeoKeyword.class)
+            .likeIfText(GeoKeyword::getCompanyName, bo.getCompanyName())
+            .eqIfText(GeoKeyword::getKeywordType, bo.getKeywordType())
             .likeIfText(GeoKeyword::getKeyword, bo.getKeyword())
-            .likeIfText(GeoKeyword::getHit, bo.getHit())
-            .eqIfPresent(GeoKeyword::getStatus, bo.getStatus())
-            .orderByAsc(GeoKeyword::getId)
+            .eqIfText(GeoKeyword::getStatus, bo.getStatus())
+            .orderByAsc(GeoKeyword::getKeywordId)
             .build();
     }
 
     /**
-     * 新增核心关键词
+     * 新增核心词管理
      *
-     * @param bo 核心关键词
+     * @param bo 核心词管理
      * @return 是否新增成功
      */
     @Override
@@ -94,15 +95,15 @@ public class GeoKeywordServiceImpl implements IGeoKeywordService {
         validEntityBeforeSave(add);
         boolean flag = geoKeywordMapper.insert(add) > 0;
         if (flag) {
-            bo.setId(add.getId());
+            bo.setKeywordId(add.getKeywordId());
         }
         return flag;
     }
 
     /**
-     * 修改核心关键词
+     * 修改核心词管理
      *
-     * @param bo 核心关键词
+     * @param bo 核心词管理
      * @return 是否修改成功
      */
     @Override
@@ -123,7 +124,7 @@ public class GeoKeywordServiceImpl implements IGeoKeywordService {
 
 
     /**
-     * 校验并批量删除核心关键词信息
+     * 校验并批量删除核心词管理信息
      *
      * @param ids     待删除的主键集合
      * @param isValid 是否进行有效性校验

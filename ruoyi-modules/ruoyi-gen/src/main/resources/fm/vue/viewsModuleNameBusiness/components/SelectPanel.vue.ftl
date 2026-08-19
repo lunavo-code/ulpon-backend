@@ -29,7 +29,7 @@
         <!-- 数据选项列表 -->
         <el-option
             v-for="item in ${v.getBase().getBusinessNameLower()}Options"
-            :key="item.id"
+            :key="item.${v.column.pkColumn.javaField}"
             :label="String(item[displayColumns[0] as keyof ${v.getBase().getBusinessNameUpper()}VO] ?? '')"
             :value="item[valueKey as keyof ${v.getBase().getBusinessNameUpper()}VO]"
         >
@@ -84,12 +84,12 @@
         // 要展示的列属性列表（首个属性对应为输入框选中的回显文字）
         displayColumns: {
             type: Array as PropType<string[]>,
-            default: () => ['value', 'testKey']
+            default: () => ['${v.column.pkColumn.javaField}']
         },
         // 选中后提交给 v-model 的字段属性
         valueKey: {
             type: String,
-            default: 'id'
+            default: '${v.column.pkColumn.javaField}'
         }
     });
 
@@ -115,12 +115,9 @@
 
     // 选项列名称映射配置
     const columnLabelsMap: Record<string, string> = {
-        id: '主键',
-        deptId: '部门ID',
-        userId: '用户ID',
-        orderNum: '排序号',
-        testKey: 'key键',
-        value: '值'
+        <#list v.column.columns as column>
+            ${column.javaField}: '${column.columnComment}',
+        </#list>
     };
 
     const getColumnLabel = (col: string) => columnLabelsMap[col] || col;
@@ -152,7 +149,7 @@
                 const res = await list${v.getBase().getBusinessNameUpper()}({
                     pageNum: pageNum.value,
                     pageSize: pageSize,
-                    value: undefined
+                    params: undefined
                 });
                 const rows = res.data?.rows || [];
                 if (isAppend) {
@@ -193,7 +190,7 @@
                 const res = await list${v.getBase().getBusinessNameUpper()}({
                     pageNum: pageNum.value,
                     pageSize: pageSize,
-                    value: query
+                    params: query
                 });
                 const rows = res.data?.rows || [];
                 if (isAppend) {

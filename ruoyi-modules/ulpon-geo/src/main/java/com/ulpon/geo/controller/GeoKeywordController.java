@@ -23,56 +23,56 @@ import com.ulpon.geo.service.IGeoKeywordService;
 import org.dromara.common.core.domain.PageResult;
 
 /**
- * 核心关键词
+ * 核心词管理
  *
  * @author Ulpon
- * @date 2026-08-09 12:53:08
+ * @date 2026-08-20 06:16:32
  */
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/geo/geoKeyword")
+@RequestMapping("/geo/keyword")
 public class GeoKeywordController extends BaseController {
 
     private final IGeoKeywordService geoKeywordService;
 
     /**
-     * 查询核心关键词列表
+     * 查询核心词管理列表
      */
-    @SaCheckPermission("geo:geoKeyword:list")
+    @SaCheckPermission("geo:keyword:list")
     @GetMapping("/list")
     public R<PageResult<GeoKeywordVo>> list(GeoKeywordBo bo, PageQuery pageQuery) {
         return R.ok(geoKeywordService.queryPageList(bo, pageQuery));
     }
 
     /**
-     * 导出核心关键词列表
+     * 导出核心词管理列表
      */
-    @SaCheckPermission("geo:geoKeyword:export")
-    @Log(title = "核心关键词", businessType = BusinessType.EXPORT)
+    @SaCheckPermission("geo:keyword:export")
+    @Log(title = "核心词管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(GeoKeywordBo bo, HttpServletResponse response) {
         List<GeoKeywordVo> list = geoKeywordService.queryList(bo);
-        ExcelBuilder.of(list, GeoKeywordVo.class).sheetName("核心关键词").toResponse(response);
+        ExcelBuilder.of(list, GeoKeywordVo.class).sheetName("核心词管理").toResponse(response);
     }
 
     /**
-     * 获取核心关键词详细信息
+     * 获取核心词管理详细信息
      *
-     * @param id 主键
+     * @param keywordId 主键
      */
-    @SaCheckPermission("geo:geoKeyword:query")
-    @GetMapping("/{id}")
+    @SaCheckPermission("geo:keyword:query")
+    @GetMapping("/{keywordId}")
     public R<GeoKeywordVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
-        return R.ok(geoKeywordService.queryById(id));
+                                     @PathVariable Long keywordId) {
+        return R.ok(geoKeywordService.queryById(keywordId));
     }
 
     /**
-     * 新增核心关键词
+     * 新增核心词管理
      */
-    @SaCheckPermission("geo:geoKeyword:add")
-    @Log(title = "核心关键词", businessType = BusinessType.INSERT)
+    @SaCheckPermission("geo:keyword:add")
+    @Log(title = "核心词管理", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody GeoKeywordBo bo) {
@@ -80,10 +80,10 @@ public class GeoKeywordController extends BaseController {
     }
 
     /**
-     * 修改核心关键词
+     * 修改核心词管理
      */
-    @SaCheckPermission("geo:geoKeyword:edit")
-    @Log(title = "核心关键词", businessType = BusinessType.UPDATE)
+    @SaCheckPermission("geo:keyword:edit")
+    @Log(title = "核心词管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody GeoKeywordBo bo) {
@@ -93,15 +93,15 @@ public class GeoKeywordController extends BaseController {
 
 
     /**
-     * 删除核心关键词
+     * 删除核心词管理
      *
-     * @param ids 主键串
+     * @param keywordIds 主键串
      */
-    @SaCheckPermission("geo:geoKeyword:remove")
-    @Log(title = "核心关键词", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
+    @SaCheckPermission("geo:keyword:remove")
+    @Log(title = "核心词管理", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{keywordIds}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        return toAjax(geoKeywordService.deleteWithValidByIds(List.of(ids), true));
+                          @PathVariable Long[] keywordIds) {
+        return toAjax(geoKeywordService.deleteWithValidByIds(List.of(keywordIds), true));
     }
 }

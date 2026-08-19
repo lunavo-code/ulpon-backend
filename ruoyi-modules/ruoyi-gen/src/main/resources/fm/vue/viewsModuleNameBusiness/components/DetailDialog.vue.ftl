@@ -205,7 +205,7 @@
             if (!valid) return;
             buttonLoading.value = true;
             try {
-                const isEdit = !!form.value.id;
+                const isEdit = !!form.value.${v.column.pkColumn.javaField};
                 isEdit ? await update${v.base.businessNameUpper}(form.value) : await add${v.base.businessNameUpper}(form.value);
                 modal.msgSuccess(isEdit ? '修改成功' : '新增成功');
                 closeDialog();

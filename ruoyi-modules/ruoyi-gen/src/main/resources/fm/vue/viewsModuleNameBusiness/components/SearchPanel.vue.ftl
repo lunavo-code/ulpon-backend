@@ -87,8 +87,13 @@
     import {ElForm} from 'element-plus';
     import {${v.base.businessNameUpper}Query} from '@/api/${v.base.moduleName}/${v.base.businessNameLower}/types';
     import {useSearchReset} from '@/hooks/form/useSearchReset';
+    <#if v.column.needDict>
+    import { useDict } from '@/utils/dict';
+    </#if>
 
     type ElFormInstance = InstanceType < typeof ElForm >;
+
+    const { ${v.column.dictsNoSymbol} } = toRefs<any>(useDict(${v.column.dicts}));
 
     const props = defineProps({
         showSearch: {
