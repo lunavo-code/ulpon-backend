@@ -1,6 +1,7 @@
 <#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
 <template>
-    <el-select
+    <span v-if="textMode">{{ model }}</span>
+    <el-select v-else
         v-model="model"
         filterable
         remote
@@ -90,7 +91,12 @@
         valueKey: {
             type: String,
             default: '${v.column.pkColumn.javaField}'
-        }
+        },
+        // 是否展示文本模式，即输入框只读，且无下拉框
+        textMode: {
+            type: Boolean,
+            default: false
+        },
     });
 
     const emit = defineEmits(['change']);

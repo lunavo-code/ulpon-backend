@@ -26,7 +26,7 @@ import org.dromara.common.core.domain.PageResult;
  * 派生标题管理
  *
  * @author Ulpon
- * @date 2026-08-20 06:16:32
+ * @date 2026-08-20 18:03:07
  */
 @Validated
 @RequiredArgsConstructor

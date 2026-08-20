@@ -10,6 +10,8 @@ import org.dromara.common.mybatis.core.page.PageQuery;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * ${v.base.functionName}Service接口
@@ -26,6 +28,24 @@ public interface I${v.base.classNameUpper}Service {
      * @return ${v.base.functionName}
      */
     ${v.base.classNameUpper}Vo queryById(${v.column.pkColumn.javaType} ${v.column.pkColumn.javaField});
+
+    /**
+     * 查询${v.base.functionName}列表
+     *
+     * @param ${v.column.pkColumn.javaField}List 主键列表
+     * @return ${v.base.functionName}列表
+     */
+    List<${v.base.classNameUpper}Vo> queryByIds(Collection<${v.column.pkColumn.javaType}> ${v.column.pkColumn.javaField}List);
+
+    /**
+     * 查询核心词管理map
+     *
+     * @param ${v.column.pkColumn.javaField}List 主键列表
+     * @return 核心词管理map
+     */
+    default Map<${v.column.pkColumn.javaType}, ${v.base.classNameUpper}Vo> queryMapByIds(Collection<${v.column.pkColumn.javaType}> ${v.column.pkColumn.javaField}List){
+        return queryByIds(${v.column.pkColumn.javaField}List).stream().collect(Collectors.toMap(${v.base.classNameUpper}Vo::get${v.column.pkColumn.capJavaField}, v -> v));
+    }
 
 <#if v.column.table.crud>
     /**

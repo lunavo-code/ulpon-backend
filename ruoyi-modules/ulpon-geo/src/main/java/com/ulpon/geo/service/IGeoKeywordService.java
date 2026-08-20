@@ -7,12 +7,14 @@ import org.dromara.common.mybatis.core.page.PageQuery;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 核心词管理Service接口
  *
  * @author Ulpon
- * @date 2026-08-20 06:16:32
+ * @date 2026-08-20 18:03:06
  */
 public interface IGeoKeywordService {
 
@@ -23,6 +25,24 @@ public interface IGeoKeywordService {
      * @return 核心词管理
      */
     GeoKeywordVo queryById(Long keywordId);
+
+    /**
+     * 查询核心词管理列表
+     *
+     * @param keywordIdList 主键列表
+     * @return 核心词管理列表
+     */
+    List<GeoKeywordVo> queryByIds(Collection<Long> keywordIdList);
+
+    /**
+     * 查询核心词管理map
+     *
+     * @param keywordIdList 主键列表
+     * @return 核心词管理map
+     */
+    default Map<Long, GeoKeywordVo> queryMapByIds(Collection<Long> keywordIdList){
+        return queryByIds(keywordIdList).stream().collect(Collectors.toMap(GeoKeywordVo::getKeywordId, v -> v));
+    }
 
     /**
      * 分页查询核心词管理列表

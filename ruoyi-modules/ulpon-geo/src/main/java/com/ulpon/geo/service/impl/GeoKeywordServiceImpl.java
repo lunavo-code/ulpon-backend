@@ -1,5 +1,6 @@
 package com.ulpon.geo.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -26,7 +27,7 @@ import java.util.Collection;
  * 核心词管理Service业务层处理
  *
  * @author Ulpon
- * @date 2026-08-20 06:16:32
+ * @date 2026-08-20 18:03:06
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -44,6 +45,18 @@ public class GeoKeywordServiceImpl implements IGeoKeywordService {
     @Override
     public GeoKeywordVo queryById(Long keywordId) {
         return geoKeywordMapper.selectVoById(keywordId);
+    }
+
+    /**
+     * 查询核心词管理列表
+     *
+     * @param keywordIdList 主键列表
+     * @return 核心词管理列表
+     */
+    @Override
+    public List<GeoKeywordVo> queryByIds(Collection<Long> keywordIdList) {
+        if (CollUtil.isEmpty(keywordIdList)) return List.of();
+        return geoKeywordMapper.selectVoByIds(keywordIdList);
     }
 
     /**

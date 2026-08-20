@@ -1,5 +1,6 @@
 package com.ulpon.geo.domain.vo;
 
+import com.ulpon.geo.constant.GeoTranslationConstant;
 import com.ulpon.geo.domain.GeoKeywordDerived;
 import org.apache.fesod.sheet.annotation.ExcelIgnoreUnannotated;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
  * 派生标题管理视图对象 geo_keyword_derived
  *
  * @author Ulpon
- * @date 2026-08-20 06:16:32
+ * @date 2026-08-20 18:03:07
  */
 @Data
 @ExcelIgnoreUnannotated
@@ -40,6 +41,9 @@ public class GeoKeywordDerivedVo implements Serializable {
     @ExcelProperty(value = "关联核心词ID")
     private Long keywordId;
 
+    @Translation(type = GeoTranslationConstant.KEYWORD_ID_2_KEYWORD, mapper = "keywordId")
+    private String keyword;
+
     /**
      * 标题类型
      */
@@ -57,7 +61,7 @@ public class GeoKeywordDerivedVo implements Serializable {
      * 状态(0待创作 1已创作 2已禁用)
      */
     @ExcelProperty(value = "状态(0待创作 1已创作 2已禁用)", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(dictType = "sys_normal_disable")
+    @ExcelDictFormat(dictType = "geo_derived_status")
     private String status;
 
     /**

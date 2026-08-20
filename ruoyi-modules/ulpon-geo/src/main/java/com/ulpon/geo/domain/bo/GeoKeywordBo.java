@@ -13,7 +13,7 @@ import jakarta.validation.constraints.*;
  * 核心词管理业务对象 geo_keyword
  *
  * @author Ulpon
- * @date 2026-08-20 06:16:32
+ * @date 2026-08-20 18:03:06
  */
 @Data
 @AutoMapper(target = GeoKeyword.class, reverseConvertGenerate = false)

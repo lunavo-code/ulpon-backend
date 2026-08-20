@@ -1,6 +1,7 @@
 <#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
 package ${v.base.packageName}.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -53,6 +54,18 @@ public class ${v.base.classNameUpper}ServiceImpl implements I${v.base.classNameU
     @Override
     public ${v.base.classNameUpper}Vo queryById(${v.column.pkColumn.javaType} ${v.column.pkColumn.javaField}) {
         return ${v.base.classNameLower}Mapper.selectVoById(${v.column.pkColumn.javaField});
+    }
+
+    /**
+     * 查询${v.base.functionName}列表
+     *
+     * @param ${v.column.pkColumn.javaField}List 主键列表
+     * @return ${v.base.functionName}列表
+     */
+    @Override
+    public List<${v.base.classNameUpper}Vo> queryByIds(Collection<${v.column.pkColumn.javaType}> ${v.column.pkColumn.javaField}List) {
+        if (CollUtil.isEmpty(${v.column.pkColumn.javaField}List)) return List.of();
+        return ${v.base.classNameLower}Mapper.selectVoByIds(${v.column.pkColumn.javaField}List);
     }
 
 <#if v.column.table.crud>

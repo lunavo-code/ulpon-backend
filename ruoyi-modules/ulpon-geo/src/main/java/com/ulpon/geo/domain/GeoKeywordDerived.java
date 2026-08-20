@@ -11,7 +11,7 @@ import java.io.Serial;
  * 派生标题管理对象 geo_keyword_derived
  *
  * @author Ulpon
- * @date 2026-08-20 06:16:32
+ * @date 2026-08-20 18:03:07
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

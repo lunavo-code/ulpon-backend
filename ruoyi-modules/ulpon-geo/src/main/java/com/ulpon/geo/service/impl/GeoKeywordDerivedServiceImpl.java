@@ -1,5 +1,6 @@
 package com.ulpon.geo.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -26,7 +27,7 @@ import java.util.Collection;
  * 派生标题管理Service业务层处理
  *
  * @author Ulpon
- * @date 2026-08-20 06:16:32
+ * @date 2026-08-20 18:03:07
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -44,6 +45,18 @@ public class GeoKeywordDerivedServiceImpl implements IGeoKeywordDerivedService {
     @Override
     public GeoKeywordDerivedVo queryById(Long derivedId) {
         return geoKeywordDerivedMapper.selectVoById(derivedId);
+    }
+
+    /**
+     * 查询派生标题管理列表
+     *
+     * @param derivedIdList 主键列表
+     * @return 派生标题管理列表
+     */
+    @Override
+    public List<GeoKeywordDerivedVo> queryByIds(Collection<Long> derivedIdList) {
+        if (CollUtil.isEmpty(derivedIdList)) return List.of();
+        return geoKeywordDerivedMapper.selectVoByIds(derivedIdList);
     }
 
     /**

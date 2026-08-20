@@ -7,12 +7,14 @@ import org.dromara.common.mybatis.core.page.PageQuery;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 派生标题管理Service接口
  *
  * @author Ulpon
- * @date 2026-08-20 06:16:32
+ * @date 2026-08-20 18:03:07
  */
 public interface IGeoKeywordDerivedService {
 
@@ -23,6 +25,24 @@ public interface IGeoKeywordDerivedService {
      * @return 派生标题管理
      */
     GeoKeywordDerivedVo queryById(Long derivedId);
+
+    /**
+     * 查询派生标题管理列表
+     *
+     * @param derivedIdList 主键列表
+     * @return 派生标题管理列表
+     */
+    List<GeoKeywordDerivedVo> queryByIds(Collection<Long> derivedIdList);
+
+    /**
+     * 查询核心词管理map
+     *
+     * @param derivedIdList 主键列表
+     * @return 核心词管理map
+     */
+    default Map<Long, GeoKeywordDerivedVo> queryMapByIds(Collection<Long> derivedIdList){
+        return queryByIds(derivedIdList).stream().collect(Collectors.toMap(GeoKeywordDerivedVo::getDerivedId, v -> v));
+    }
 
     /**
      * 分页查询派生标题管理列表
