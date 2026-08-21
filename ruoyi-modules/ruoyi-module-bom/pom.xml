@@ -64,6 +64,13 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!-- ai模块 -->
+            <dependency>
+                <groupId>com.ulpon</groupId>
+                <artifactId>ulpon-ai</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <!-- geo模块 -->
             <dependency>
                 <groupId>com.ulpon</groupId>

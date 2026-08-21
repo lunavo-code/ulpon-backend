@@ -24,6 +24,7 @@
         <module>ruoyi-workflow</module>
         <module>ruoyi-ai</module>
         <module>ulpon-geo</module>
+        <module>ulpon-ai</module>
     </modules>
 
 </project>
