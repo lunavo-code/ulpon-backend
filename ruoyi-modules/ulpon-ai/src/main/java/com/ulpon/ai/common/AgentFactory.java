@@ -2,13 +2,13 @@ package com.ulpon.ai.common;
 
 import com.ulpon.ai.domain.AiAgent;
 import com.ulpon.ai.exceptions.AiException;
-import com.ulpon.ai.service.IAiAgentService;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.service.AiServices;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class AgentFactory {
     private final ModelFactory modelFactory;
-    private final IAiAgentService agentService;
     private final DbChatMemoryStore chatMemoryStore;
 
     private final Map<AgentKey, Object> agentMap = new ConcurrentHashMap<>();
@@ -32,14 +31,11 @@ public class AgentFactory {
         return tClass.cast(o);
     }
 
-    public <T> T getAgent(Long agentId, Class<T> tClass) {
-        AiAgent agent = agentService.getById(agentId);
-        if (agent == null) throw new AiException("Agent不存在: " + agentId);
-        return getAgent(agent, tClass);
-    }
-
     public void evict(Long agentId) {
         agentMap.keySet().removeIf(key -> key.agentId().equals(agentId));
+    }
+    public void evict(Collection<Long> ids) {
+        ids.forEach(this::evict);
     }
 
     private <T> T createAgent(AiAgent agent, Class<T> tClass) {
@@ -51,6 +47,7 @@ public class AgentFactory {
         if (agent.getSystemPrompt() != null && !agent.getSystemPrompt().isBlank()) {
             services.systemMessage(agent.getSystemPrompt());
         }
+        log.error(agent.toString());
         if (agent.getMemoryEnabled()) {
             int value;
             if (agent.getMemoryWindow() == null) {

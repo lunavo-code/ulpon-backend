@@ -38,9 +38,9 @@ public class GeoKeywordDerivedVo implements Serializable {
     /**
      * 关联核心词ID
      */
-    @ExcelProperty(value = "关联核心词ID")
     private Long keywordId;
 
+    @ExcelProperty(value = "关联核心词")
     @Translation(type = GeoTranslationConstant.KEYWORD_ID_2_KEYWORD, mapper = "keywordId")
     private String keyword;
 

@@ -93,9 +93,9 @@ public class AiAgent extends BaseEntity {
     private String scopeType;
 
     /**
-     * 启用状态（0正常 1停用）
+     * 状态
      */
-    private Boolean status;
+    private String status;
 
     /**
      * 删除标志（0代表存在 1代表删除）

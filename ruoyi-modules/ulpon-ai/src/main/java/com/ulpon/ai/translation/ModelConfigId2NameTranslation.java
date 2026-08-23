@@ -15,8 +15,8 @@ import java.util.Set;
 
 @Component
 @AllArgsConstructor
-@TranslationType(type = AiTranslationConstant.CHAT_MODEL_ID_2_NAME)
-public class ModelId2NameTranslation implements TranslationInterface<String> {
+@TranslationType(type = AiTranslationConstant.MODEL_CONFIG_ID_2_NAME)
+public class ModelConfigId2NameTranslation implements TranslationInterface<String> {
     private final IAiModelConfigService baseService;
 
     @Override

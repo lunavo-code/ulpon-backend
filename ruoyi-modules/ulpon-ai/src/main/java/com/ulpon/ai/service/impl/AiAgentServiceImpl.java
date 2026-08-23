@@ -1,28 +1,25 @@
 package com.ulpon.ai.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
-import org.dromara.common.core.utils.MapstructUtils;
-import org.dromara.common.core.utils.StringUtils;
-import org.dromara.common.core.domain.PageResult;
-import org.dromara.common.mybatis.core.page.PageQuery;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import org.dromara.common.mybatis.core.query.QueryBuilder;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
+import com.ulpon.ai.common.AgentFactory;
+import com.ulpon.ai.domain.AiAgent;
 import com.ulpon.ai.domain.bo.AiAgentBo;
 import com.ulpon.ai.domain.vo.AiAgentVo;
-import com.ulpon.ai.domain.AiAgent;
 import com.ulpon.ai.mapper.AiAgentMapper;
 import com.ulpon.ai.service.IAiAgentService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.common.core.domain.PageResult;
+import org.dromara.common.core.utils.MapstructUtils;
+import org.dromara.common.mybatis.core.page.PageQuery;
+import org.dromara.common.mybatis.core.query.QueryBuilder;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 智能体Service业务层处理
@@ -36,6 +33,7 @@ import java.util.Collection;
 public class AiAgentServiceImpl extends ServiceImpl<AiAgentMapper, AiAgent> implements IAiAgentService {
 
     private final AiAgentMapper aiAgentMapper;
+    private final AgentFactory agentFactory;
 
     /**
      * 查询智能体
@@ -134,9 +132,10 @@ public class AiAgentServiceImpl extends ServiceImpl<AiAgentMapper, AiAgent> impl
     public Boolean updateByBo(AiAgentBo bo) {
         AiAgent update = MapstructUtils.convert(bo, AiAgent.class);
         validEntityBeforeSave(update);
-        return aiAgentMapper.updateById(update) > 0;
+        boolean b = aiAgentMapper.updateById(update) > 0;
+        if (b) agentFactory.evict(bo.getAgentId());
+        return b;
     }
-
 
 
     /**
@@ -159,7 +158,9 @@ public class AiAgentServiceImpl extends ServiceImpl<AiAgentMapper, AiAgent> impl
         if (isValid) {
             // 可在此扩展删除前业务校验
         }
-        return aiAgentMapper.deleteByIds(ids) > 0;
+        boolean b = aiAgentMapper.deleteByIds(ids) > 0;
+        if (b) agentFactory.evict(ids);
+        return b;
     }
 
 }

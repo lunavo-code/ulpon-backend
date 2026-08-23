@@ -1,7 +1,7 @@
 <#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
 <template>
-    <el-dialog class="dialog-grid-form" v-model="dialog.visible" :title="dialog.title" width="800px" append-to-body>
-        <el-form ref="${v.base.businessNameLower}FormRef" :model="form" :rules="rules" label-width="80px">
+    <el-dialog v-model="dialog.visible" :title="dialog.title" width="800px" append-to-body>
+        <el-form class="dialog-grid-form" ref="${v.base.businessNameLower}FormRef" :model="form" :rules="rules" label-width="80px">
             <#list v.column.columns?filter(col -> (col.insert || col.edit) && !col.pk) as column>
                 <#if column.htmlType == "input">
                     <el-form-item label="${column.columnLabel}" prop="${column.javaField}">

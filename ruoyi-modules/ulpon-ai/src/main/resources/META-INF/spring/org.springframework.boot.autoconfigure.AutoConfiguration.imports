@@ -1,2 +1,3 @@
+com.ulpon.ai.config.AiUlponConfig
 com.ulpon.ai.translation.ProviderId2NameTranslation
-com.ulpon.ai.translation.ModelId2NameTranslation
+com.ulpon.ai.translation.ModelConfigId2NameTranslation

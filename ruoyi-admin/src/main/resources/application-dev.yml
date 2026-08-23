@@ -10,6 +10,10 @@ spring.boot.admin.client:
       userpassword: ${spring.boot.admin.client.password}
   username: @monitor.username@
   password: @monitor.password@
+ulpon:
+  ai:
+    generate-title-ai-capability-id: 2091226801618579457
+    generate-agent-meta-ai-capability-id: 2091227181207285761
 
 --- # snail-job 配置
 snail-job:

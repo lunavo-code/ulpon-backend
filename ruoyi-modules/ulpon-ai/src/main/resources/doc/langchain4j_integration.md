@@ -315,105 +315,115 @@ graph TD
 -- ==========================================
 
 -- 1. AI大模型提供商表
-CREATE TABLE `ai_model_provider` (
-    `provider_id`       bigint(20)      NOT NULL AUTO_INCREMENT    COMMENT '主键 ID',
-    `provider_name`     varchar(100)    NOT NULL                   COMMENT '提供商名称',
-    `provider_code`     varchar(50)     NOT NULL                   COMMENT '提供商唯一标识键',
-    `default_base_url`  varchar(255)    NOT NULL                   COMMENT '默认 API 接口地址',
-    `status`            char(1)         NOT NULL DEFAULT '0'       COMMENT '启用状态（0正常 1停用）',
-    `del_flag`          char(1)         DEFAULT '0'                COMMENT '删除标志（0代表存在 1代表删除）',
-    `create_dept`       bigint(20)      DEFAULT NULL               COMMENT '创建部门',
-    `create_by`         bigint(20)      DEFAULT NULL               COMMENT '创建者',
-    `create_time`       datetime        DEFAULT NULL               COMMENT '创建时间',
-    `update_by`         bigint(20)      DEFAULT NULL               COMMENT '更新者',
-    `update_time`       datetime        DEFAULT NULL               COMMENT '更新时间',
-    `remark`            varchar(500)    DEFAULT NULL               COMMENT '备注',
+CREATE TABLE `ai_model_provider`
+(
+    `provider_id`      bigint(20)   NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `provider_name`    varchar(100) NOT NULL COMMENT '提供商名称',
+    `provider_code`    varchar(50)  NOT NULL COMMENT '提供商唯一标识键',
+    `default_base_url` varchar(255) NOT NULL COMMENT '默认 API 接口地址',
+    `status`           char(1)      NOT NULL DEFAULT '0' COMMENT '启用状态（0正常 1停用）',
+    `del_flag`         char(1)               DEFAULT '0' COMMENT '删除标志（0代表存在 1代表删除）',
+    `create_dept`      bigint(20)            DEFAULT NULL COMMENT '创建部门',
+    `create_by`        bigint(20)            DEFAULT NULL COMMENT '创建者',
+    `create_time`      datetime              DEFAULT NULL COMMENT '创建时间',
+    `update_by`        bigint(20)            DEFAULT NULL COMMENT '更新者',
+    `update_time`      datetime              DEFAULT NULL COMMENT '更新时间',
+    `remark`           varchar(500)          DEFAULT NULL COMMENT '备注',
     PRIMARY KEY (`provider_id`),
     UNIQUE KEY `uk_provider_code` (`provider_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI大模型提供商表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AI大模型提供商表';
 
 -- 2. AI大模型配置表
-CREATE TABLE `ai_model_config` (
-    `model_config_id`   bigint(20)      NOT NULL AUTO_INCREMENT    COMMENT '主键 ID',
-    `provider_id`       bigint(20)      NOT NULL                   COMMENT '提供商 ID',
-    `config_name`       varchar(100)    NOT NULL                   COMMENT '配置别名/名称',
-    `model_name`        varchar(100)    NOT NULL                   COMMENT '目标模型名称',
-    `base_url`          varchar(255)    DEFAULT NULL               COMMENT 'API 接口覆盖地址',
-    `api_key`           varchar(255)    NOT NULL                   COMMENT 'API 密钥 (Script Key)',
-    `max_tokens`        int(11)         DEFAULT NULL               COMMENT '最大生成 Token 数',
-    `temperature`       double          DEFAULT NULL               COMMENT '温度参数 (0.0 ~ 2.0)',
-    `status`            char(1)         NOT NULL DEFAULT '0'       COMMENT '启用状态（0正常 1停用）',
-    `is_default`        char(1)         NOT NULL DEFAULT 'N'       COMMENT '是否为默认模型（Y是 N否）',
-    `del_flag`          char(1)         DEFAULT '0'                COMMENT '删除标志（0代表存在 1代表删除）',
-    `create_dept`       bigint(20)      DEFAULT NULL               COMMENT '创建部门',
-    `create_by`         bigint(20)      DEFAULT NULL               COMMENT '创建者',
-    `create_time`       datetime        DEFAULT NULL               COMMENT '创建时间',
-    `update_by`         bigint(20)      DEFAULT NULL               COMMENT '更新者',
-    `update_time`       datetime        DEFAULT NULL               COMMENT '更新时间',
-    `remark`            varchar(500)    DEFAULT NULL               COMMENT '备注',
+CREATE TABLE `ai_model_config`
+(
+    `model_config_id` bigint(20)   NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `provider_id`     bigint(20)   NOT NULL COMMENT '提供商 ID',
+    `config_name`     varchar(100) NOT NULL COMMENT '配置别名/名称',
+    `model_name`      varchar(100) NOT NULL COMMENT '目标模型名称',
+    `base_url`        varchar(255)          DEFAULT NULL COMMENT 'API 接口覆盖地址',
+    `api_key`         varchar(255) NOT NULL COMMENT 'API 密钥 (Script Key)',
+    `max_tokens`      int(11)               DEFAULT NULL COMMENT '最大生成 Token 数',
+    `temperature`     double                DEFAULT NULL COMMENT '温度参数 (0.0 ~ 2.0)',
+    `status`          char(1)      NOT NULL DEFAULT '0' COMMENT '启用状态（0正常 1停用）',
+    `is_default`      char(1)      NOT NULL DEFAULT 'N' COMMENT '是否为默认模型（Y是 N否）',
+    `del_flag`        char(1)               DEFAULT '0' COMMENT '删除标志（0代表存在 1代表删除）',
+    `create_dept`     bigint(20)            DEFAULT NULL COMMENT '创建部门',
+    `create_by`       bigint(20)            DEFAULT NULL COMMENT '创建者',
+    `create_time`     datetime              DEFAULT NULL COMMENT '创建时间',
+    `update_by`       bigint(20)            DEFAULT NULL COMMENT '更新者',
+    `update_time`     datetime              DEFAULT NULL COMMENT '更新时间',
+    `remark`          varchar(500)          DEFAULT NULL COMMENT '备注',
     PRIMARY KEY (`model_config_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI大模型配置表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AI大模型配置表';
 
 -- 3. AI智能体表
-CREATE TABLE `ai_agent` (
-    `agent_id`          bigint(20)      NOT NULL AUTO_INCREMENT    COMMENT '主键 ID',
-    `agent_name`        varchar(100)    NOT NULL                   COMMENT '智能体名称',
-    `avatar`            varchar(255)    DEFAULT NULL               COMMENT '智能体头像',
-    `description`       varchar(500)    DEFAULT NULL               COMMENT '智能体描述简介',
-    `system_prompt`     varchar(2000)   DEFAULT NULL               COMMENT '系统提示词 (System Prompt)',
-    `model_config_id`   bigint(20)      NOT NULL                   COMMENT '关联大模型配置 ID',
-    `kb_enabled`        char(1)         NOT NULL DEFAULT '0'       COMMENT '启用知识库（0停用 1启用）',
-    `kb_id`             bigint(20)      DEFAULT NULL               COMMENT '关联知识库 ID',
-    `search_enabled`    char(1)         NOT NULL DEFAULT '0'       COMMENT '启用联网检索（0停用 1启用）',
-    `memory_enabled`    char(1)         NOT NULL DEFAULT '1'       COMMENT '启用聊天记忆（0停用 1启用）',
-    `memory_window`     int(11)         DEFAULT NULL               COMMENT '记忆窗口长度',
-    `greeting`          varchar(500)    DEFAULT NULL               COMMENT '问候语',
-    `preset_questions`  varchar(1000)   DEFAULT NULL               COMMENT '预设问题',
-    `scope_type`        char(1)         NOT NULL DEFAULT '1'       COMMENT '可见范围类型（1个人 2组织 3公开）',
-    `dept_id`           bigint(20)      DEFAULT NULL               COMMENT '所属部门 ID',
-    `user_id`           bigint(20)      NOT NULL                   COMMENT '创建人用户 ID',
-    `status`            char(1)         NOT NULL DEFAULT '0'       COMMENT '启用状态（0正常 1停用）',
-    `del_flag`          char(1)         DEFAULT '0'                COMMENT '删除标志（0代表存在 1代表删除）',
-    `create_dept`       bigint(20)      DEFAULT NULL               COMMENT '创建部门',
-    `create_by`         bigint(20)      DEFAULT NULL               COMMENT '创建者',
-    `create_time`       datetime        DEFAULT NULL               COMMENT '创建时间',
-    `update_by`         bigint(20)      DEFAULT NULL               COMMENT '更新者',
-    `update_time`       datetime        DEFAULT NULL               COMMENT '更新时间',
-    `remark`            varchar(500)    DEFAULT NULL               COMMENT '备注',
+CREATE TABLE `ai_agent`
+(
+    `agent_id`         bigint(20)   NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `agent_name`       varchar(100) NOT NULL COMMENT '智能体名称',
+    `avatar`           varchar(255)          DEFAULT NULL COMMENT '智能体头像',
+    `description`      varchar(500)          DEFAULT NULL COMMENT '智能体描述简介',
+    `system_prompt`    varchar(2000)         DEFAULT NULL COMMENT '系统提示词 (System Prompt)',
+    `model_config_id`  bigint(20)   NOT NULL COMMENT '关联大模型配置 ID',
+    `kb_enabled`       char(1)      NOT NULL DEFAULT '0' COMMENT '启用知识库（0停用 1启用）',
+    `kb_id`            bigint(20)            DEFAULT NULL COMMENT '关联知识库 ID',
+    `search_enabled`   char(1)      NOT NULL DEFAULT '0' COMMENT '启用联网检索（0停用 1启用）',
+    `memory_enabled`   char(1)      NOT NULL DEFAULT '1' COMMENT '启用聊天记忆（0停用 1启用）',
+    `memory_window`    int(11)               DEFAULT NULL COMMENT '记忆窗口长度',
+    `greeting`         varchar(500)          DEFAULT NULL COMMENT '问候语',
+    `preset_questions` varchar(1000)         DEFAULT NULL COMMENT '预设问题',
+    `scope_type`       char(1)      NOT NULL DEFAULT '1' COMMENT '可见范围类型（1个人 2组织 3公开）',
+    `dept_id`          bigint(20)            DEFAULT NULL COMMENT '所属部门 ID',
+    `user_id`          bigint(20)   NOT NULL COMMENT '创建人用户 ID',
+    `status`           char(1)      NOT NULL DEFAULT '0' COMMENT '启用状态（0正常 1停用）',
+    `del_flag`         char(1)               DEFAULT '0' COMMENT '删除标志（0代表存在 1代表删除）',
+    `create_dept`      bigint(20)            DEFAULT NULL COMMENT '创建部门',
+    `create_by`        bigint(20)            DEFAULT NULL COMMENT '创建者',
+    `create_time`      datetime              DEFAULT NULL COMMENT '创建时间',
+    `update_by`        bigint(20)            DEFAULT NULL COMMENT '更新者',
+    `update_time`      datetime              DEFAULT NULL COMMENT '更新时间',
+    `remark`           varchar(500)          DEFAULT NULL COMMENT '备注',
     PRIMARY KEY (`agent_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI智能体表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AI智能体表';
 
 -- 4. AI对话会话表
-CREATE TABLE `ai_chat_session` (
-    `session_id`        bigint(20)      NOT NULL AUTO_INCREMENT    COMMENT '主键 ID',
-    `session_name`      varchar(200)    NOT NULL                   COMMENT '会话名称',
-    `agent_id`          bigint(20)      NOT NULL                   COMMENT '关联智能体 ID',
-    `user_id`           bigint(20)      NOT NULL                   COMMENT '会话所有者 ID',
-    `del_flag`          char(1)         DEFAULT '0'                COMMENT '删除标志（0代表存在 1代表删除）',
-    `create_dept`       bigint(20)      DEFAULT NULL               COMMENT '创建部门',
-    `create_by`         bigint(20)      DEFAULT NULL               COMMENT '创建者',
-    `create_time`       datetime        DEFAULT NULL               COMMENT '创建时间',
-    `update_by`         bigint(20)      DEFAULT NULL               COMMENT '更新者',
-    `update_time`       datetime        DEFAULT NULL               COMMENT '更新时间',
+CREATE TABLE `ai_chat_session`
+(
+    `session_id`   bigint(20)   NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `session_name` varchar(200) NOT NULL COMMENT '会话名称',
+    `agent_id`     bigint(20)   NOT NULL COMMENT '关联智能体 ID',
+    `user_id`      bigint(20)   NOT NULL COMMENT '会话所有者 ID',
+    `del_flag`     char(1)    DEFAULT '0' COMMENT '删除标志（0代表存在 1代表删除）',
+    `create_dept`  bigint(20) DEFAULT NULL COMMENT '创建部门',
+    `create_by`    bigint(20) DEFAULT NULL COMMENT '创建者',
+    `create_time`  datetime   DEFAULT NULL COMMENT '创建时间',
+    `update_by`    bigint(20) DEFAULT NULL COMMENT '更新者',
+    `update_time`  datetime   DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`session_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI对话会话表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AI对话会话表';
 
 -- 5. AI对话消息表
-CREATE TABLE `ai_chat_message` (
-    `message_id`        bigint(20)      NOT NULL AUTO_INCREMENT    COMMENT '主键 ID',
-    `session_id`        bigint(20)      NOT NULL                   COMMENT '关联会话 ID',
-    `role`              varchar(20)     NOT NULL                   COMMENT '角色类型（system, user, assistant, tool）',
-    `content`           longtext        NOT NULL                   COMMENT '消息内容',
-    `token_count`       int(11)         DEFAULT NULL               COMMENT 'Token 消耗数',
-    `del_flag`          char(1)         DEFAULT '0'                COMMENT '删除标志（0代表存在 1代表删除）',
-    `create_dept`       bigint(20)      DEFAULT NULL               COMMENT '创建部门',
-    `create_by`         bigint(20)      DEFAULT NULL               COMMENT '创建者',
-    `create_time`       datetime        DEFAULT NULL               COMMENT '创建时间',
-    `update_by`         bigint(20)      DEFAULT NULL               COMMENT '更新者',
-    `update_time`       datetime        DEFAULT NULL               COMMENT '更新时间',
+CREATE TABLE `ai_chat_message`
+(
+    `message_id`  bigint(20)  NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `session_id`  bigint(20)  NOT NULL COMMENT '关联会话 ID',
+    `role`        varchar(20) NOT NULL COMMENT '角色类型（system, user, assistant, tool）',
+    `content`     longtext    NOT NULL COMMENT '消息内容',
+    `token_count` int(11)    DEFAULT NULL COMMENT 'Token 消耗数',
+    `del_flag`    char(1)    DEFAULT '0' COMMENT '删除标志（0代表存在 1代表删除）',
+    `create_dept` bigint(20) DEFAULT NULL COMMENT '创建部门',
+    `create_by`   bigint(20) DEFAULT NULL COMMENT '创建者',
+    `create_time` datetime   DEFAULT NULL COMMENT '创建时间',
+    `update_by`   bigint(20) DEFAULT NULL COMMENT '更新者',
+    `update_time` datetime   DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`message_id`),
     KEY `idx_session_id` (`session_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI对话消息表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AI对话消息表';
 
 
 -- ==========================================
@@ -421,84 +431,135 @@ CREATE TABLE `ai_chat_message` (
 -- ==========================================
 
 -- 6. AI知识库主表
-CREATE TABLE `ai_knowledge_base` (
-    `kb_id`              bigint(20)      NOT NULL AUTO_INCREMENT    COMMENT '主键 ID',
-    `kb_name`            varchar(100)    NOT NULL                   COMMENT '知识库名称',
-    `description`        varchar(500)    DEFAULT NULL               COMMENT '知识库描述',
-    `embedding_model_id` bigint(20)      NOT NULL                   COMMENT '向量化模型 ID',
-    `status`             char(1)         NOT NULL DEFAULT '0'       COMMENT '启用状态（0正常 1停用）',
-    `del_flag`           char(1)         DEFAULT '0'                COMMENT '删除标志（0代表存在 1代表删除）',
-    `create_dept`        bigint(20)      DEFAULT NULL               COMMENT '创建部门',
-    `create_by`          bigint(20)      DEFAULT NULL               COMMENT '创建者',
-    `create_time`        datetime        DEFAULT NULL               COMMENT '创建时间',
-    `update_by`          bigint(20)      DEFAULT NULL               COMMENT '更新者',
-    `update_time`        datetime        DEFAULT NULL               COMMENT '更新时间',
-    `remark`             varchar(500)    DEFAULT NULL               COMMENT '备注',
+CREATE TABLE `ai_knowledge_base`
+(
+    `kb_id`              bigint(20)   NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `kb_name`            varchar(100) NOT NULL COMMENT '知识库名称',
+    `description`        varchar(500)          DEFAULT NULL COMMENT '知识库描述',
+    `embedding_model_id` bigint(20)   NOT NULL COMMENT '向量化模型 ID',
+    `status`             char(1)      NOT NULL DEFAULT '0' COMMENT '启用状态（0正常 1停用）',
+    `del_flag`           char(1)               DEFAULT '0' COMMENT '删除标志（0代表存在 1代表删除）',
+    `create_dept`        bigint(20)            DEFAULT NULL COMMENT '创建部门',
+    `create_by`          bigint(20)            DEFAULT NULL COMMENT '创建者',
+    `create_time`        datetime              DEFAULT NULL COMMENT '创建时间',
+    `update_by`          bigint(20)            DEFAULT NULL COMMENT '更新者',
+    `update_time`        datetime              DEFAULT NULL COMMENT '更新时间',
+    `remark`             varchar(500)          DEFAULT NULL COMMENT '备注',
     PRIMARY KEY (`kb_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI知识库主表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AI知识库主表';
 
 -- 7. AI知识库文档表
-CREATE TABLE `ai_knowledge_document` (
-    `doc_id`             bigint(20)      NOT NULL AUTO_INCREMENT    COMMENT '主键 ID',
-    `kb_id`              bigint(20)      NOT NULL                   COMMENT '关联知识库 ID',
-    `doc_name`           varchar(255)    NOT NULL                   COMMENT '文档名称',
-    `file_path`          varchar(255)    NOT NULL                   COMMENT '文件存储路径',
-    `doc_type`           varchar(20)     DEFAULT NULL               COMMENT '文档后缀类型',
-    `status`             char(1)         NOT NULL DEFAULT '0'       COMMENT '解析状态（0上传中 1解析中 2解析完成 3解析失败）',
-    `del_flag`           char(1)         DEFAULT '0'                COMMENT '删除标志（0代表存在 1代表删除）',
-    `create_dept`        bigint(20)      DEFAULT NULL               COMMENT '创建部门',
-    `create_by`          bigint(20)      DEFAULT NULL               COMMENT '创建者',
-    `create_time`        datetime        DEFAULT NULL               COMMENT '创建时间',
-    `update_by`          bigint(20)      DEFAULT NULL               COMMENT '更新者',
-    `update_time`        datetime        DEFAULT NULL               COMMENT '更新时间',
-    `remark`             varchar(500)    DEFAULT NULL               COMMENT '备注',
+CREATE TABLE `ai_knowledge_document`
+(
+    `doc_id`      bigint(20)   NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `kb_id`       bigint(20)   NOT NULL COMMENT '关联知识库 ID',
+    `doc_name`    varchar(255) NOT NULL COMMENT '文档名称',
+    `file_path`   varchar(255) NOT NULL COMMENT '文件存储路径',
+    `doc_type`    varchar(20)           DEFAULT NULL COMMENT '文档后缀类型',
+    `status`      char(1)      NOT NULL DEFAULT '0' COMMENT '解析状态（0上传中 1解析中 2解析完成 3解析失败）',
+    `del_flag`    char(1)               DEFAULT '0' COMMENT '删除标志（0代表存在 1代表删除）',
+    `create_dept` bigint(20)            DEFAULT NULL COMMENT '创建部门',
+    `create_by`   bigint(20)            DEFAULT NULL COMMENT '创建者',
+    `create_time` datetime              DEFAULT NULL COMMENT '创建时间',
+    `update_by`   bigint(20)            DEFAULT NULL COMMENT '更新者',
+    `update_time` datetime              DEFAULT NULL COMMENT '更新时间',
+    `remark`      varchar(500)          DEFAULT NULL COMMENT '备注',
     PRIMARY KEY (`doc_id`),
     KEY `idx_kb_id` (`kb_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI知识库文档表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AI知识库文档表';
 
 -- 8. AI系统工具插件表
-CREATE TABLE `ai_tool` (
-    `tool_id`            bigint(20)      NOT NULL AUTO_INCREMENT    COMMENT '主键 ID',
-    `tool_name`          varchar(100)    NOT NULL                   COMMENT '工具名称',
-    `tool_code`          varchar(50)     NOT NULL                   COMMENT '工具唯一标识键',
-    `tool_type`          char(1)         NOT NULL DEFAULT '1'       COMMENT '工具类型（1系统内置 2自定义HTTP请求）',
-    `metadata`           text            DEFAULT NULL               COMMENT '入参定义（JSON Schema）',
-    `status`             char(1)         NOT NULL DEFAULT '0'       COMMENT '启用状态（0正常 1停用）',
-    `del_flag`           char(1)         DEFAULT '0'                COMMENT '删除标志（0代表存在 1代表删除）',
-    `create_dept`        bigint(20)      DEFAULT NULL               COMMENT '创建部门',
-    `create_by`          bigint(20)      DEFAULT NULL               COMMENT '创建者',
-    `create_time`        datetime        DEFAULT NULL               COMMENT '创建时间',
-    `update_by`          bigint(20)      DEFAULT NULL               COMMENT '更新者',
-    `update_time`        datetime        DEFAULT NULL               COMMENT '更新时间',
-    `remark`             varchar(500)    DEFAULT NULL               COMMENT '备注',
+CREATE TABLE `ai_tool`
+(
+    `tool_id`     bigint(20)   NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `tool_name`   varchar(100) NOT NULL COMMENT '工具名称',
+    `tool_code`   varchar(50)  NOT NULL COMMENT '工具唯一标识键',
+    `tool_type`   char(1)      NOT NULL DEFAULT '1' COMMENT '工具类型（1系统内置 2自定义HTTP请求）',
+    `metadata`    text                  DEFAULT NULL COMMENT '入参定义（JSON Schema）',
+    `status`      char(1)      NOT NULL DEFAULT '0' COMMENT '启用状态（0正常 1停用）',
+    `del_flag`    char(1)               DEFAULT '0' COMMENT '删除标志（0代表存在 1代表删除）',
+    `create_dept` bigint(20)            DEFAULT NULL COMMENT '创建部门',
+    `create_by`   bigint(20)            DEFAULT NULL COMMENT '创建者',
+    `create_time` datetime              DEFAULT NULL COMMENT '创建时间',
+    `update_by`   bigint(20)            DEFAULT NULL COMMENT '更新者',
+    `update_time` datetime              DEFAULT NULL COMMENT '更新时间',
+    `remark`      varchar(500)          DEFAULT NULL COMMENT '备注',
     PRIMARY KEY (`tool_id`),
     UNIQUE KEY `uk_tool_code` (`tool_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI系统工具插件表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AI系统工具插件表';
 
 -- 9. AI智能体-工具插件关联表
-CREATE TABLE `ai_agent_tool` (
-    `agent_id`           bigint(20)      NOT NULL                   COMMENT '智能体 ID',
-    `tool_id`            bigint(20)      NOT NULL                   COMMENT '工具 ID',
+CREATE TABLE `ai_agent_tool`
+(
+    `agent_id` bigint(20) NOT NULL COMMENT '智能体 ID',
+    `tool_id`  bigint(20) NOT NULL COMMENT '工具 ID',
     PRIMARY KEY (`agent_id`, `tool_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI智能体-工具插件关联表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AI智能体-工具插件关联表';
 
 -- 10. AI大模型调用审计日志表
-CREATE TABLE `ai_call_log` (
-    `log_id`             bigint(20)      NOT NULL AUTO_INCREMENT    COMMENT '主键 ID',
-    `user_id`            bigint(20)      DEFAULT NULL               COMMENT '用户 ID',
-    `agent_id`           bigint(20)      DEFAULT NULL               COMMENT '智能体 ID',
-    `model_config_id`    bigint(20)      DEFAULT NULL               COMMENT '模型配置 ID',
-    `prompt_tokens`      int(11)         DEFAULT NULL               COMMENT '输入消耗 Token',
-    `completion_tokens`  int(11)         DEFAULT NULL               COMMENT '输出消耗 Token',
-    `total_tokens`       int(11)         DEFAULT NULL               COMMENT '总消耗 Token',
-    `response_time_ms`   bigint(20)      DEFAULT NULL               COMMENT '响应耗时（毫秒）',
-    `status`             char(1)         NOT NULL DEFAULT '0'       COMMENT '调用状态（0成功 1失败）',
-    `error_message`      text            DEFAULT NULL               COMMENT '失败报错详情',
-    `create_time`        datetime        DEFAULT NULL               COMMENT '调用时间',
+CREATE TABLE `ai_call_log`
+(
+    `log_id`            bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `user_id`           bigint(20)          DEFAULT NULL COMMENT '用户 ID',
+    `agent_id`          bigint(20)          DEFAULT NULL COMMENT '智能体 ID',
+    `model_config_id`   bigint(20)          DEFAULT NULL COMMENT '模型配置 ID',
+    `prompt_tokens`     int(11)             DEFAULT NULL COMMENT '输入消耗 Token',
+    `completion_tokens` int(11)             DEFAULT NULL COMMENT '输出消耗 Token',
+    `total_tokens`      int(11)             DEFAULT NULL COMMENT '总消耗 Token',
+    `response_time_ms`  bigint(20)          DEFAULT NULL COMMENT '响应耗时（毫秒）',
+    `status`            char(1)    NOT NULL DEFAULT '0' COMMENT '调用状态（0成功 1失败）',
+    `error_message`     text                DEFAULT NULL COMMENT '失败报错详情',
+    `create_time`       datetime            DEFAULT NULL COMMENT '调用时间',
     PRIMARY KEY (`log_id`),
     KEY `idx_user_id` (`user_id`),
     KEY `idx_agent_id` (`agent_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI大模型调用审计日志表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AI大模型调用审计日志表';
+
+-- 补充功能
+CREATE TABLE `ai_capability`
+(
+    `capability_id`   bigint(20)   NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `capability_name` varchar(100) NOT NULL COMMENT '能力名称',
+    `description`     varchar(500)          DEFAULT NULL COMMENT '任务描述简介',
+    `system_prompt`   varchar(2000)         DEFAULT NULL COMMENT '系统提示词 (System Prompt)',
+    `model_config_id` bigint(20)   NOT NULL COMMENT '关联大模型配置 ID',
+    `scope_type`      char(1)      NOT NULL DEFAULT '1' COMMENT '可见范围类型（1个人 2组织 3公开）',
+    `dept_id`         bigint(20)            DEFAULT NULL COMMENT '所属部门 ID',
+    `user_id`         bigint(20)   NOT NULL COMMENT '创建人用户 ID',
+    `status`          char(1)      NOT NULL DEFAULT '0' COMMENT '启用状态（0正常 1停用）',
+    `del_flag`        char(1)               DEFAULT '0' COMMENT '删除标志（0代表存在 1代表删除）',
+    `create_dept`     bigint(20)            DEFAULT NULL COMMENT '创建部门',
+    `create_by`       bigint(20)            DEFAULT NULL COMMENT '创建者',
+    `create_time`     datetime              DEFAULT NULL COMMENT '创建时间',
+    `update_by`       bigint(20)            DEFAULT NULL COMMENT '更新者',
+    `update_time`     datetime              DEFAULT NULL COMMENT '更新时间',
+    `remark`          varchar(500)          DEFAULT NULL COMMENT '备注',
+    PRIMARY KEY (`capability_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AI能力表';
+
+CREATE TABLE `ai_capability_task`
+(
+    `task_id`       bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `capability_id` bigint(20) NOT NULL COMMENT '能力 ID',
+    `user_content`  longtext   NOT NULL COMMENT '用户消息内容',
+    `res_content`   longtext   NOT NULL COMMENT '反馈消息内容',
+    `token_count`   int(11)    DEFAULT NULL COMMENT 'Token 消耗数',
+    `del_flag`      char(1)    DEFAULT '0' COMMENT '删除标志（0代表存在 1代表删除）',
+    `create_dept`   bigint(20) DEFAULT NULL COMMENT '创建部门',
+    `create_by`     bigint(20) DEFAULT NULL COMMENT '创建者',
+    `create_time`   datetime   DEFAULT NULL COMMENT '创建时间',
+    `update_by`     bigint(20) DEFAULT NULL COMMENT '更新者',
+    `update_time`   datetime   DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`task_id`),
+    KEY `idx_session_id` (`capability_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AI能力任务表';
 ```
 
 ## 3. 核心后端架构与设计

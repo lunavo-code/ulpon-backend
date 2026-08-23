@@ -1,6 +1,7 @@
 package com.ulpon.ai.common;
 
 import com.ulpon.ai.domain.AiModelConfig;
+import com.ulpon.ai.exceptions.AiException;
 import com.ulpon.ai.service.IAiModelConfigService;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
@@ -20,6 +21,7 @@ public class ModelFactory {
     private final IAiModelConfigService modelConfigService;
 
     private static final Map<Long, ChatModel> chatModelMap = new HashMap<>();
+    private ChatModel defaultChatModel = null;
 
     public record ChatModel(OpenAiChatModel chatModel, OpenAiStreamingChatModel streamingChatModel) {
     }
@@ -30,6 +32,7 @@ public class ModelFactory {
         list.forEach(config -> {
             ChatModel chatModel = buildOpenAiChatModel(config);
             chatModelMap.put(config.getModelConfigId(), chatModel);
+            if(config.getIsDefault()) defaultChatModel = chatModel;
         });
     }
 
@@ -40,6 +43,12 @@ public class ModelFactory {
     public ChatModel getChatModel(Long modelId) {
         return chatModelMap.get(modelId);
     }
+
+    public ChatModel getChatModel() {
+        if(defaultChatModel == null) throw new AiException("未指定默认模型，请先指定");
+        return defaultChatModel;
+    }
+
 
     private ChatModel buildOpenAiChatModel(AiModelConfig config) {
         Map<String, Object> customParameters = Map.of(

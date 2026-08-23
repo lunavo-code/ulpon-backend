@@ -1,6 +1,8 @@
 <#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
 package ${v.base.packageName}.service;
 
+import com.baomidou.mybatisplus.spring.service.IService;
+import ${v.base.packageName}.domain.${v.base.classNameUpper};
 import ${v.base.packageName}.domain.vo.${v.base.classNameUpper}Vo;
 import ${v.base.packageName}.domain.bo.${v.base.classNameUpper}Bo;
 <#if v.column.table.crud>
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
  * @author ${v.base.author}
  * @date ${v.base.datetime}
  */
-public interface I${v.base.classNameUpper}Service {
+public interface I${v.base.classNameUpper}Service extends IService<${v.base.classNameUpper}> {
 
     /**
      * 查询${v.base.functionName}

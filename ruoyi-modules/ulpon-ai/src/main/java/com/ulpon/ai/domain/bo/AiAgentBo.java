@@ -100,10 +100,10 @@ public class AiAgentBo implements Serializable {
     private String scopeType;
 
     /**
-     * 启用状态（0正常 1停用）
+     * 状态
      */
-    @NotNull(message = "启用状态（0正常 1停用）不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Boolean status;
+    @NotNull(message = "状态", groups = { AddGroup.class, EditGroup.class })
+    private String status;
 
     /**
      * 备注

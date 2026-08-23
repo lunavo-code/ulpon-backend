@@ -3,6 +3,7 @@ package ${v.base.packageName}.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 <#if v.column.table.crud>
@@ -23,6 +24,8 @@ import ${v.base.packageName}.domain.vo.${v.base.classNameUpper}Vo;
 import ${v.base.packageName}.domain.${v.base.classNameUpper};
 import ${v.base.packageName}.mapper.${v.base.classNameUpper}Mapper;
 import ${v.base.packageName}.service.I${v.base.classNameUpper}Service;
+import ${v.base.packageName}.domain.${v.base.classNameUpper};
+import ${v.base.packageName}.mapper.${v.base.classNameUpper}Mapper;
 <#if v.column.table.tree>
 import org.dromara.common.core.exception.ServiceException;
 </#if>
@@ -41,7 +44,7 @@ import java.util.Collection;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class ${v.base.classNameUpper}ServiceImpl implements I${v.base.classNameUpper}Service {
+public class ${v.base.classNameUpper}ServiceImpl extends ServiceImpl<${v.base.classNameUpper}Mapper, ${v.base.classNameUpper}> implements I${v.base.classNameUpper}Service {
 
     private final ${v.base.classNameUpper}Mapper ${v.base.classNameLower}Mapper;
 

@@ -13,7 +13,6 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * 智能体视图对象 ai_agent
@@ -73,7 +72,7 @@ public class AiAgentVo implements Serializable {
      * 关联大模型配置 ID
      */
     @ExcelProperty(value = "关联大模型配置名称")
-    @Translation(type = AiTranslationConstant.CHAT_MODEL_ID_2_NAME, mapper = "modelConfigId")
+    @Translation(type = AiTranslationConstant.MODEL_CONFIG_ID_2_NAME, mapper = "modelConfigId")
     private Long modelConfigName;
 
     /**
@@ -129,11 +128,11 @@ public class AiAgentVo implements Serializable {
     private String scopeType;
 
     /**
-     * 启用状态（0正常 1停用）
+     * 状态
      */
-    @ExcelProperty(value = "启用状态", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "0=正常,1=停用")
-    private Boolean status;
+    @ExcelProperty(value = "状态", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "ai_agent_status")
+    private String status;
 
     /**
      * 备注
