@@ -46,6 +46,11 @@
             <artifactId>ruoyi-common-log</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>ruoyi-common-excel</artifactId>
+        </dependency>
+
         <!-- FreeMarker代码生成模板 -->
         <dependency>
             <groupId>org.freemarker</groupId>

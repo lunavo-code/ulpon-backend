@@ -1,4 +1,31 @@
 <#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
+<#--文本框  input-->
+
+<#--数字输入  inputNumber-->
+
+<#--文本域  textarea-->
+
+<#--下拉框  select 字典-->
+
+<#--单选框  radio 字典-->
+
+<#--复选框  checkbox 字典-->
+
+<#--开关  switch 字典-->
+
+<#--日期控件  datetime-->
+
+<#--图片上传  imageUpload-->
+
+<#--文件上传  fileUpload-->
+
+<#--富文本控件  editor-->
+
+
+
+
+
+
 <template>
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="800px" append-to-body>
         <el-form class="dialog-grid-form" ref="${v.base.businessNameLower}FormRef" :model="form" :rules="rules" label-width="80px">
@@ -85,15 +112,9 @@
                     <el-form-item label="${column.columnLabel}" prop="${column.javaField}">
                         <el-switch
                             v-model="form.${column.javaField}"
-                            <#if column.javaType == "Boolean">
-                                :active-value="true"
-                                :inactive-value="false"
-                            <#elseif column.javaType == "Integer" || column.javaType == "Long">
+                            <#if column.javaType == "Integer" || column.javaType == "Long">
                                 :active-value="0"
                                 :inactive-value="1"
-                            <#else>
-                                active-value="0"
-                                inactive-value="1"
                             </#if>
                         />
                     </el-form-item>

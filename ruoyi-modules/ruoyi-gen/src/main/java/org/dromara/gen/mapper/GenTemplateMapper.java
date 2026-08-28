@@ -1,16 +1,17 @@
 package org.dromara.gen.mapper;
 
-import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
+import org.dromara.gen.domain.GenTemplate;
+import org.dromara.gen.domain.vo.GenTemplateVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
-import org.dromara.gen.domain.GenTemplate;
 
 /**
- * 业务 数据层
+ * 代码生成模板Mapper接口
  *
  * @author Ulpon
+ * @date 2026-08-28 14:02:26
  */
 @Mapper
-@InterceptorIgnore(dataPermission = "true", tenantLine = "true")
-public interface GenTemplateMapper extends BaseMapperPlus<GenTemplate, GenTemplate> {
+public interface GenTemplateMapper extends BaseMapperPlus<GenTemplate, GenTemplateVo> {
+
 }
