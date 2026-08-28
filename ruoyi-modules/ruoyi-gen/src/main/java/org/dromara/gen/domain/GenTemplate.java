@@ -1,5 +1,7 @@
 package org.dromara.gen.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
@@ -16,6 +18,8 @@ import java.io.Serial;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("gen_template")
+@AllArgsConstructor
+@NoArgsConstructor
 public class GenTemplate extends BaseEntity {
 
     @Serial
