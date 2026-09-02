@@ -3,13 +3,11 @@ package org.dromara.common.core.enums.common;
 import cn.hutool.core.util.ClassUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.common.core.exception.base.BaseException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -17,48 +15,45 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EnumScanner implements InitializingBean {
     private static final List<String> packageList = List.of("org.dromara", "com.ulpon");
-    private static final Map<String, EnumInfo> enumMap = new HashMap<>();
-
     private static final EnumInfo NULL_RES = new EnumInfo();
-
-    private String buildKey(String model, String key) {
-        return "%s:%s".formatted(model, key);
-    }
+    private final Map<String, Map<String, EnumInfo>> enumMap = new HashMap<>();
 
     public Map<String, EnumInfo> get(String model, List<String> keys) {
         Map<String, EnumInfo> infoMap = enumMap.get(model);
         return keys.stream().collect(Collectors.toMap(
-            key -> buildKey(model, key),
-            key -> infoMap == null ? NULL_RES : infoMap.get(key))
+            key -> key,
+            key -> infoMap == null ? NULL_RES : infoMap.getOrDefault(key, NULL_RES))
         );
     }
 
     @Override
     public void afterPropertiesSet() {
         log.info("扫描交互枚举");
-        packageList.stream().flatMap(packageName -> ClassUtil.scanPackage(packageName).stream())
+        Map<String, Map<String, EnumInfo>> map = packageList.stream()
+            .flatMap(packageName -> ClassUtil.scanPackage(packageName).stream())
             .filter(Class::isEnum)
             .filter(clazz -> clazz.isAnnotationPresent(EnumName.class))
             .filter(BaseEnum.class::isAssignableFrom)
-            .forEach(clazz -> {
-                EnumName annotation = clazz.getAnnotation(EnumName.class);
-                String modelName = annotation.modelName();
-                String name = annotation.name();
-                String desc = annotation.desc();
-                enumMap.get(buildKey(modelName, ))
+            .map(this::toEnumInfo)
+            .collect(Collectors.groupingBy(
+                EnumInfo::getModel,
+                Collectors.toMap(
+                    EnumInfo::getKey,
+                    info -> info,
+                    (a, b) -> {
+                        throw new BaseException("相同模块中不可定义重名枚举 %s:%s，%s, %s".formatted(a.getModel(), a.getKey(), a.getClassPath(), b.getClassPath()));
+                    }
+                )
+            ));
+        enumMap.putAll(map);
+    }
 
-
-                Map<String, EnumInfo> orDefault = enumMap.getOrDefault(modelName, new HashMap<>());
-                enumMap.put(modelName, orDefault);
-                String simpleName = clazz.getSimpleName();
-                if (orDefault.containsKey(simpleName)) {
-                    throw new RuntimeException("枚举名称重复");
-                }
-                log.info("load enum: " + clazz.getName());
-                List<EnumInfo.KV> values = Arrays.stream(clazz.getEnumConstants()).map(obj -> (BaseEnum) obj)
-                    .map(be -> new EnumInfo.KV(be.getCode(), be.getDesc()))
-                    .toList();
-                orDefault.put(simpleName, new EnumInfo(modelName, simpleName, name, desc, values));
-            });
+    private EnumInfo toEnumInfo(Class<?> clazz) {
+        EnumName annotation = clazz.getAnnotation(EnumName.class);
+        List<EnumInfo.KV> values = Arrays.stream(clazz.getEnumConstants())
+            .map(BaseEnum.class::cast)
+            .map(e -> new EnumInfo.KV(e.getCode(), e.getDesc()))
+            .toList();
+        return new EnumInfo(annotation.modelName(), clazz.getName(), clazz.getSimpleName(), annotation.name(), annotation.desc(), values);
     }
 }

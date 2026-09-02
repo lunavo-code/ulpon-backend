@@ -1,5 +1,6 @@
 package org.dromara.common.core.enums.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 public class EnumInfo {
     private String model;
+    @JsonIgnore
+    private String classPath;
     private String key;
     private String name;
     private String desc;
