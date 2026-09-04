@@ -7,6 +7,7 @@ import org.dromara.gen.domain.GenTable;
 import org.dromara.gen.domain.GenTableColumn;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +46,7 @@ public class GenColumnVariable {
      * 用于生成字典导入、字典转换以及前端字典选择器等代码。</p>
      */
     private String dicts;
+    private Map<String, String> enums;
     /**
      * 去除符号后的字典类型集合。
      * <p>与 {@link #dicts} 对应，但去除了模板生成过程中不需要的引号等符号，
@@ -52,6 +54,7 @@ public class GenColumnVariable {
      * 用于部分前端或脚本模板直接使用。</p>
      */
     private String dictsNoSymbol;
+    private Map<String, String> enumsNoSymbol;
     /**
      * 是否存在 BETWEEN 查询条件。
      * <p>表示当前表的查询字段中是否存在时间范围或数值范围查询，
@@ -163,8 +166,19 @@ public class GenColumnVariable {
         this.pkColumn = table.getPkColumn();
         // ==================== 字典 ====================
         String dictStr = this.columns.stream().filter(column -> !column.isSuperColumn() && StringUtils.isNotEmpty(column.getDictType()) && StringUtils.equalsAny(column.getHtmlType(), GenConstants.HTML_SELECT, GenConstants.HTML_RADIO, GenConstants.HTML_CHECKBOX, GenConstants.HTML_SWITCH)).map(column -> "'%s'".formatted(column.getDictType())).collect(Collectors.joining(", "));
+
+        Map<String, String> enumsMap = this.columns.stream().filter(column -> !column.isSuperColumn() && StringUtils.isNotEmpty(column.getDictType()) && StringUtils.equalsAny(column.getHtmlType(), GenConstants.HTML_SELECT, GenConstants.HTML_RADIO, GenConstants.HTML_CHECKBOX, GenConstants.HTML_SWITCH))
+            .collect(Collectors.groupingBy(column -> column.getDictType().split(":")[0]))
+            .entrySet().stream()
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                entry -> entry.getValue().stream().map(column -> "'%s'".formatted(column.getDictType())).collect(Collectors.joining(", ")))
+            );
         this.dicts = dictStr;
+        this.enums = enumsMap;
         this.dictsNoSymbol = StringUtils.replace(dictStr, "'", StringUtils.EMPTY);
+        enumsMap.entrySet().stream().
+        this.enumsNoSymbol = StringUtils.replace(enumStr, "'", StringUtils.EMPTY);
         // ==================== 字段能力分析 ====================
         for (GenTableColumn column : this.columns) {
             boolean writable = column.isInsert() || column.isEdit();

@@ -119,6 +119,12 @@ public class GenTableColumn extends BaseEntity {
     private String dictType;
 
     /**
+     * 字典类型
+     */
+    @TableField(updateStrategy = FieldStrategy.ALWAYS, jdbcType = JdbcType.VARCHAR)
+    private String enumType;
+
+    /**
      * 排序
      */
     private Integer sort;
