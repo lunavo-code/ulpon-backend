@@ -36,7 +36,9 @@ public class EnumScanner implements InitializingBean {
         if (infoMap == null) {
             return List.of();
         }
-        return infoMap.get(enumType).getValues();
+        EnumDefinition.EnumInfo enumInfo = infoMap.get(enumType);
+        if(enumInfo == null) return List.of();
+        return enumInfo.getValues();
     }
 
     @Override

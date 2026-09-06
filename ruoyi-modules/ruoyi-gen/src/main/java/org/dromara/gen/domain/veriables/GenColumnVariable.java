@@ -79,6 +79,7 @@ public class GenColumnVariable {
      * 用于决定前端是否需要生成字典相关组件或数据。</p>
      */
     private Boolean needDict = false;
+    private Boolean needEnum = false;
     /**
      * 是否需要图片预览。
      * <p>表示列表中是否存在图片字段，
@@ -167,18 +168,20 @@ public class GenColumnVariable {
         // ==================== 字典 ====================
         String dictStr = this.columns.stream().filter(column -> !column.isSuperColumn() && StringUtils.isNotEmpty(column.getDictType()) && StringUtils.equalsAny(column.getHtmlType(), GenConstants.HTML_SELECT, GenConstants.HTML_RADIO, GenConstants.HTML_CHECKBOX, GenConstants.HTML_SWITCH)).map(column -> "'%s'".formatted(column.getDictType())).collect(Collectors.joining(", "));
 
-        Map<String, String> enumsMap = this.columns.stream().filter(column -> !column.isSuperColumn() && StringUtils.isNotEmpty(column.getDictType()) && StringUtils.equalsAny(column.getHtmlType(), GenConstants.HTML_SELECT, GenConstants.HTML_RADIO, GenConstants.HTML_CHECKBOX, GenConstants.HTML_SWITCH))
-            .collect(Collectors.groupingBy(column -> column.getDictType().split(":")[0]))
+        Map<String, String> enumsMap = this.columns.stream().filter(column -> !column.isSuperColumn() && StringUtils.isNotEmpty(column.getEnumType()) && StringUtils.equalsAny(column.getHtmlType(), GenConstants.HTML_SELECT, GenConstants.HTML_RADIO, GenConstants.HTML_CHECKBOX, GenConstants.HTML_SWITCH))
+            .collect(Collectors.groupingBy(column -> column.getEnumType().split(":")[0]))
             .entrySet().stream()
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
-                entry -> entry.getValue().stream().map(column -> "'%s'".formatted(column.getDictType())).collect(Collectors.joining(", ")))
+                entry -> entry.getValue().stream().map(column -> "'%s'".formatted(column.getEnumType())).collect(Collectors.joining(", ")))
             );
         this.dicts = dictStr;
         this.enums = enumsMap;
         this.dictsNoSymbol = StringUtils.replace(dictStr, "'", StringUtils.EMPTY);
-        enumsMap.entrySet().stream().
-        this.enumsNoSymbol = StringUtils.replace(enumStr, "'", StringUtils.EMPTY);
+        this.enumsNoSymbol = enumsMap.entrySet().stream().collect(Collectors.toMap(
+            Map.Entry::getKey,
+            k -> StringUtils.replace(k.getValue(), "'", StringUtils.EMPTY)
+        ));
         // ==================== 字段能力分析 ====================
         for (GenTableColumn column : this.columns) {
             boolean writable = column.isInsert() || column.isEdit();
@@ -189,6 +192,7 @@ public class GenColumnVariable {
             this.needDateRange = this.needAddDateRange;
             // 字典
             this.needDict = StringUtils.isNotBlank(this.dicts);
+            this.needEnum = !this.enums.isEmpty();
             // 图片预览
             this.needImagePreview = this.needImagePreview || column.isList() && StringUtils.equals(column.getHtmlType(), GenConstants.HTML_IMAGE_UPLOAD);
             // 图片上传
