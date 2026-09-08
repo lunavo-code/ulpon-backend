@@ -41,6 +41,8 @@ public class GenBaseVariable {
      */
     private String packageName;
 
+    private String packagePath;
+
     /**
      * 模块名称。
      * <p>表示当前代码所属的业务模块名称，
@@ -155,6 +157,7 @@ public class GenBaseVariable {
         this.businessNameLower = table.getBusinessName();
         this.businessNameUpper = StringUtils.capitalize(this.businessNameLower);
         this.packageName = table.getPackageName();
+        this.packagePath = packageName.replace(".", "/");
         int lastIndex = this.packageName.lastIndexOf(".");
         this.basePackage = StringUtils.substring(this.packageName, 0, lastIndex);
         this.author = table.getFunctionAuthor();

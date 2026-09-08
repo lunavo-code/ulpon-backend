@@ -1,31 +1,4 @@
 <#-- @ftlvariable name="v" type="org.dromara.gen.domain.veriables.GenVariable" -->
-<#--文本框  input-->
-
-<#--数字输入  inputNumber-->
-
-<#--文本域  textarea-->
-
-<#--下拉框  select 字典-->
-
-<#--单选框  radio 字典-->
-
-<#--复选框  checkbox 字典-->
-
-<#--开关  switch 字典-->
-
-<#--日期控件  datetime-->
-
-<#--图片上传  imageUpload-->
-
-<#--文件上传  fileUpload-->
-
-<#--富文本控件  editor-->
-
-
-
-
-
-
 <template>
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="800px" append-to-body>
         <el-form class="dialog-grid-form" ref="${v.base.businessNameLower}FormRef" :model="form" :rules="rules" label-width="80px">
@@ -149,16 +122,12 @@
         add${v.base.businessNameUpper},
         update${v.base.businessNameUpper}
     } from '@/api/${v.base.moduleName}/${v.base.businessNameLower}';
-
-    import { ElForm } from 'element-plus';
     import { ${v.base.businessNameUpper}Form } from '@/api/${v.base.moduleName}/${v.base.businessNameLower}/types';
     import { useFormDialog } from '@/hooks/dialog/useFormDialog';
     import modal from '@/plugins/modal';
     <#if v.column.needDict>
     import { useDict } from '@/utils/dict';
     </#if>
-
-    type ElFormInstance = InstanceType<typeof ElForm>;
 
     const { ${v.column.dictsNoSymbol} } = toRefs<any>(useDict(${v.column.dicts}));
 

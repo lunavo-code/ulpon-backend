@@ -14,7 +14,7 @@
 
 <script setup name="${v.classNameUppercase}" lang="ts">
     import { ref } from 'vue';
-    import ${v.classNameUppercase}SearchPanel from './components/${v.classNameUppercase}SearchPanel.vue';
+    import ${v.classNameUppercase}SearchPanel from './components/${v.base.classNameUpper}SearchPanel.vue';
     import ${v.classNameUppercase}TablePanel from './components/${v.classNameUppercase}TablePanel.vue';
     import ${v.classNameUppercase}DetailDialog from './components/${v.classNameUppercase}DetailDialog.vue';
 

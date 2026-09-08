@@ -1,11 +1,17 @@
 package org.dromara.gen.controller;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.dromara.gen.domain.GenTemplate;
+import org.dromara.gen.domain.vo.RenderParam;
+import org.dromara.gen.enums.TemplateTypeEnum;
+import org.dromara.gen.util.TemplateLoadUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.redis.annotation.RepeatSubmit;
@@ -64,7 +70,7 @@ public class GenTemplateController extends BaseController {
     @SaCheckPermission("gen:template:query")
     @GetMapping("/{id}")
     public R<GenTemplateVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                    @PathVariable Long id) {
         return R.ok(genTemplateService.queryById(id));
     }
 
@@ -90,8 +96,6 @@ public class GenTemplateController extends BaseController {
         return toAjax(genTemplateService.updateByBo(bo));
     }
 
-
-
     /**
      * 删除代码生成模板
      *
@@ -104,4 +108,20 @@ public class GenTemplateController extends BaseController {
                           @PathVariable Long[] ids) {
         return toAjax(genTemplateService.deleteWithValidByIds(List.of(ids), true));
     }
+
+//    /**
+//     * 解析模板
+//     */
+//    @PostMapping("render")
+//    public R<String> render(@RequestBody RenderParam renderParam) {
+//        GenTemplate genTemplate = new GenTemplate(100L, 100L, "name", TemplateTypeEnum.java, "1.0", "abcde", renderParam.getContent(), 0);
+//        Map<String, Object> params = renderParam.getParams();
+//        try {
+//            TemplateLoadUtil.CodeInfo codeInfo = TemplateLoadUtil.loadTemplateMap(params, genTemplate);
+//            return R.ok(R.SUCCESS_MESSAGE, codeInfo.getContent());
+//        } catch (Exception e) {
+//            String message = e.getMessage();
+//            return R.ok(R.SUCCESS_MESSAGE, message);
+//        }
+//    }
 }

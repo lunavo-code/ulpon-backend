@@ -96,6 +96,7 @@ sa-token:
   is-share: false
   # jwt秘钥
   jwt-secret-key: abcdefghijklmnopqrstuvwxyz
+  is-print: false
 
 # security配置
 security:
@@ -125,12 +126,12 @@ mybatis-plus:
   # 实体扫描，多个package用逗号或者分号分隔
   typeAliasesPackage: org.dromara.**.domain,com.ulpon.**.domain
   global-config:
+    banner: false
     dbConfig:
       # 主键类型
       # AUTO 自增 NONE 空 INPUT 用户输入 ASSIGN_ID 雪花 ASSIGN_UUID 唯一 UUID
       # 如需改为自增 需要将数据库表全部设置为自增
       idType: ASSIGN_ID
-
 # 数据加密
 mybatis-encryptor:
   # 是否开启加密
@@ -144,6 +145,9 @@ mybatis-encryptor:
   # 公私钥 非对称算法的公私钥 如：SM2，RSA
   publicKey:
   privateKey:
+
+mybatis-plus-join:
+  banner: false
 
 # api接口加密
 api-decrypt:
@@ -195,7 +199,7 @@ xss:
   excludeUrls:
     - /system/notice
     - /warm-flow/save-json
-
+    - /gen/template/**
 --- # 分布式锁 lock4j 全局配置
 lock4j:
   # 获取分布式锁超时时间，默认为 3000 毫秒
@@ -384,3 +388,5 @@ spring.ai.mcp:
             - -y
             - '@modelcontextprotocol/server-filesystem'
             - D:/data
+sms:
+  is-print: false

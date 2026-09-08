@@ -2,14 +2,13 @@ package org.dromara.gen.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.dromara.common.core.enums.common.BaseEnum;
 import org.dromara.common.core.enums.common.EnumDefinition;
 import org.dromara.common.core.enums.common.EnumName;
 
 @AllArgsConstructor
 @Getter
 @EnumName(name = "模板类型", modelName = "gen")
-public enum TemplateCategoryEnum implements EnumDefinition {
+public enum TemplateTypeEnum implements EnumDefinition {
     java("java", "java", "java"),
     xml("xml", "xml", "xml"),
     sql("sql", "sql", "sql"),

@@ -11,6 +11,7 @@ import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import freemarker.template.TemplateException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.anyline.metadata.Column;
@@ -23,22 +24,26 @@ import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
+import org.dromara.common.mybatis.utils.IdGeneratorUtil;
 import org.dromara.gen.constant.GenConstants;
 import org.dromara.gen.domain.GenTable;
 import org.dromara.gen.domain.GenTableColumn;
-import org.dromara.gen.domain.RenderContext;
+import org.dromara.gen.domain.GenTemplate;
+import org.dromara.gen.domain.veriables.GenVariable;
 import org.dromara.gen.mapper.GenTableColumnMapper;
 import org.dromara.gen.mapper.GenTableMapper;
+import org.dromara.gen.mapper.GenTemplateMapper;
 import org.dromara.gen.util.GenUtils;
-import org.dromara.gen.util.TemplateEngineUtils;
-import org.dromara.gen.util.template.BaseTemplate;
+import org.dromara.gen.util.TemplateLoadUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -55,6 +60,7 @@ public class GenTableServiceImpl implements IGenTableService {
     private final GenTableMapper tableMapper;
     private final GenTableColumnMapper genTableColumnMapper;
     private final GenCodeService genCodeService;
+    private final GenTemplateMapper genTemplateMapper;
 
     private static final String[] TABLE_IGNORE = new String[]{"sai_", "sj_", "flow_"};
 
@@ -324,12 +330,15 @@ public class GenTableServiceImpl implements IGenTableService {
      */
     @Override
     public Map<String, String> previewCode(Long tableId) {
-        Map<String, String> dataMap = new LinkedHashMap<>();
-        RenderContext<BaseTemplate> rc = genCodeService.gen(tableId);
-        for (BaseTemplate template : rc.templates()) {
-            dataMap.put(template.getPathName(), template.render(rc.context()));
+        try {
+            List<TemplateLoadUtil.CodeInfo> codeInfos = gen(tableId);
+            return codeInfos.stream().collect(Collectors.toMap(
+                k -> new File(k.getFilePath()).getName(),
+                TemplateLoadUtil.CodeInfo::getContent
+            ));
+        } catch (IOException | TemplateException e) {
+            throw new RuntimeException(e);
         }
-        return dataMap;
     }
 
     /**
@@ -437,6 +446,33 @@ public class GenTableServiceImpl implements IGenTableService {
         }
     }
 
+    private List<TemplateLoadUtil.CodeInfo> gen(Long tableId) throws TemplateException, IOException {
+        GenTable genTable = tableMapper.selectById(tableId);
+        List<GenTableColumn> columns = genTableColumnMapper.lambda().eq(GenTableColumn::getTableId, tableId).list();
+        genTable.setColumns(columns);
+
+        // 生成菜单sql主键
+        List<Long> menuIds = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            menuIds.add(IdGeneratorUtil.nextLongId());
+        }
+        genTable.setMenuIds(menuIds);
+        // 设置主键列
+        if (CollUtil.isEmpty(genTable.getColumns())){
+            throw new ServiceException("表【" + genTable.getTableName() + "】字段为空，请检查表结构");
+        }
+        for (GenTableColumn column : genTable.getColumns()) {
+            if (!column.isPk()) continue;
+            genTable.setPkColumn(column);
+            break;
+        }
+        if (ObjectUtil.isNull(genTable.getPkColumn())) genTable.setPkColumn(genTable.getColumns().getFirst());
+
+        GenVariable genVariable = new GenVariable(genTable);
+        List<GenTemplate> genTemplates = genTemplateMapper.selectList();
+        return TemplateLoadUtil.loadTemplateMap(Dict.of("v", genVariable), genTemplates);
+    }
+
     /**
      * 查询表信息并生成代码
      *
@@ -444,21 +480,16 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param zip     代码压缩输出流
      */
     private void writeCodeToZip(Long tableId, ZipOutputStream zip) {
-        RenderContext<BaseTemplate> rc = genCodeService.gen(tableId);
-        GenTable table = rc.table();
-        for (BaseTemplate template : rc.templates()) {
-            String pathName = template.getPathName();
-            try {
-                String render = template.render(rc.context());
-//                zip.putNextEntry(new ZipEntry(TemplateEngineUtils.getFileName(pathName, table)));
-                String exportFilePath = template.getExportFilePath();
-                zip.putNextEntry(new ZipEntry(exportFilePath));
-                IoUtil.write(zip, StandardCharsets.UTF_8, false, render);
+        try {
+            List<TemplateLoadUtil.CodeInfo> codeInfos = gen(tableId);
+            for (TemplateLoadUtil.CodeInfo codeInfo : codeInfos) {
+                zip.putNextEntry(new ZipEntry(codeInfo.getFilePath()));
+                IoUtil.write(zip, StandardCharsets.UTF_8, false, codeInfo.getContent());
                 zip.flush();
                 zip.closeEntry();
-            } catch (IOException e) {
-                log.error("渲染模板失败，表名：{}", table.getTableName(), e);
             }
+        } catch (IOException | TemplateException e) {
+            throw new RuntimeException(e);
         }
     }
 

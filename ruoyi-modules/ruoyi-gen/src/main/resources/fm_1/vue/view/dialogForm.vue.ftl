@@ -62,12 +62,9 @@
 
 <script setup name="${v.base.businessNameUpper}DetailDialog" lang="ts">
     import {get${v.base.businessNameUpper}, add${v.base.businessNameUpper}, update${v.base.businessNameUpper}} from '@/api/${v.base.moduleName}/${v.base.businessNameLower}';
-    import { ElForm } from 'element-plus';
     import { ${v.base.businessNameUpper}Form } from '@/api/${v.base.moduleName}/${v.base.businessNameLower}/types';
     import { useFormDialog } from '@/hooks/dialog/useFormDialog';
     import modal from '@/plugins/modal';
-
-    type ElFormInstance = InstanceType<typeof ElForm>;
 
     const emit = defineEmits(['success']);
 

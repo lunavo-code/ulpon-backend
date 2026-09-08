@@ -6,7 +6,7 @@ import cn.hutool.extra.template.TemplateUtil;
 import cn.hutool.extra.template.engine.freemarker.FreemarkerEngine;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.gen.constant.GenConstants;
-import org.dromara.gen.enums.TemplateCategoryEnum;
+import org.dromara.gen.enums.TemplateTypeEnum;
 import org.dromara.gen.util.template.BaseTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,9 +39,9 @@ public class GenTemplateConfig {
     }
 
     @Bean
-    public Map<TemplateCategoryEnum, List<BaseTemplate>> templateMapperCacheAll(TemplateEngine templateEngine) {
+    public Map<TemplateTypeEnum, List<BaseTemplate>> templateMapperCacheAll(TemplateEngine templateEngine) {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        return Arrays.stream(TemplateCategoryEnum.values())
+        return Arrays.stream(TemplateTypeEnum.values())
             .collect(Collectors.toMap(
                 type -> type,
                 type -> templateMap(templateEngine, resolver, type.toString())

@@ -6,6 +6,7 @@ import org.dromara.common.mybatis.core.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.dromara.gen.enums.TemplateTypeEnum;
 
 import java.io.Serial;
 
@@ -31,6 +32,18 @@ public class GenTemplate extends BaseEntity {
     @TableId(value = "id")
     private Long id;
 
+    private Long templateGroupId;
+
+    /**
+     * 模板名称
+     */
+    private String name;
+
+    /**
+     * 模板类型: backend,frontend-vue,frontend-react,sql
+     */
+    private TemplateTypeEnum type;
+
     /**
      * 版本
      */
@@ -38,19 +51,10 @@ public class GenTemplate extends BaseEntity {
     private String version;
 
     /**
-     * 模板类型: backend,frontend-vue,frontend-react,sql
-     */
-    private String type;
-
-    /**
      * 生成路径
      */
     private String path;
 
-    /**
-     * 模板名称
-     */
-    private String name;
 
     /**
      * 模板内容
@@ -61,6 +65,5 @@ public class GenTemplate extends BaseEntity {
      * 排序
      */
     private Integer sort;
-
 
 }

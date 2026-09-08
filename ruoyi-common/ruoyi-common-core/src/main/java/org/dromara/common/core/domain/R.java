@@ -23,6 +23,9 @@ public class R<T> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    public static final String SUCCESS_MESSAGE = "操作成功";
+    public static final String FILED_MESSAGE = "操作失败";
+
     /**
      * 响应状态码
      */
@@ -45,7 +48,7 @@ public class R<T> implements Serializable {
      * @return 成功响应结果对象
      */
     public static <T> R<T> ok() {
-        return restResult(null, SUCCESS, "操作成功");
+        return restResult(null, SUCCESS, SUCCESS_MESSAGE);
     }
 
     /**
@@ -56,7 +59,7 @@ public class R<T> implements Serializable {
      * @return 成功响应结果对象
      */
     public static <T> R<T> ok(T data) {
-        return restResult(data, SUCCESS, "操作成功");
+        return restResult(data, SUCCESS, SUCCESS_MESSAGE);
     }
 
     /**
@@ -67,7 +70,7 @@ public class R<T> implements Serializable {
      * @return 成功响应结果对象
      */
     public static <T> R<T> data(T data) {
-        return restResult(data, SUCCESS, "操作成功");
+        return restResult(data, SUCCESS, SUCCESS_MESSAGE);
     }
 
     /**
@@ -100,7 +103,7 @@ public class R<T> implements Serializable {
      * @return 失败响应结果对象
      */
     public static <T> R<T> fail() {
-        return restResult(null, ERROR, "操作失败");
+        return restResult(null, ERROR, FILED_MESSAGE);
     }
 
     /**
@@ -122,7 +125,7 @@ public class R<T> implements Serializable {
      * @return 失败响应结果对象
      */
     public static <T> R<T> fail(T data) {
-        return restResult(data, ERROR, "操作失败");
+        return restResult(data, ERROR, FILED_MESSAGE);
     }
 
     /**
